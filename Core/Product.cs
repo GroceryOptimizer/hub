@@ -8,5 +8,11 @@ namespace Core
 {
     internal class Product
     {
+        private string _name { get; }
+
+        public Product(string name)
+        {
+            this._name = name;
+        }
     }
 }

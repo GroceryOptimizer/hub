@@ -8,5 +8,13 @@ namespace Core
 {
     internal class Vendor
     {
+        private string _name { get; }
+        private Coordinates _coordinates { get; }
+
+        public Vendor(string name, Coordinates coordinates)
+        {
+            this._name = name;
+            this._coordinates = coordinates;
+        }
     }
 }

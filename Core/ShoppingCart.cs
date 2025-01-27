@@ -8,5 +8,11 @@ namespace Core
 {
     internal class ShoppingCart
     {
+        private StockItem[] _cart { get; }
+
+        public ShoppingCart (StockItem[] cart)
+        {
+            this._cart = cart;
+        }
     }
 }
