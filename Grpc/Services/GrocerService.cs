@@ -1,19 +1,19 @@
-namespace Grpc.Services;
+//namespace Grpc.Services;
 
-public class GrocerService : HubStoreService.HubStoreServiceBase
-{
-    public GrocerService()
-    {
+//public class GrocerService : HubStoreService.HubStoreServiceBase
+//{
+//    public GrocerService()
+//    {
 
-    }
+//    }
 
-    public Task<HealthCheckResponse> CheckIn(Store store) {
+//    public Task<HealthCheckResponse> CheckIn(Store store) {
 
-        return Task.FromResult(new HealthCheckResponse {
-            StoreId = store.Id,
+//        return Task.FromResult(new HealthCheckResponse {
+//            StoreId = store.Id,
             
-        });
+//        });
 
-    }
+//    }
     
-}
+//}

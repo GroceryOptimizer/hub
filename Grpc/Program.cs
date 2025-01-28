@@ -1,14 +1,32 @@
-using Grpc.Services;
+using System;
+using System.Threading.Tasks;
 
-var builder = WebApplication.CreateBuilder(args);
+using Grpc.Net.Client;
 
-// Add services to the container.
-builder.Services.AddGrpc();
+using VendorProto;  // The namespace we specified in the proto file
 
-var app = builder.Build();
+namespace HubClient
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // The server is listening on localhost:50051
+            using var channel = GrpcChannel.ForAddress("http://localhost:50051");
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+            // The generated client is VendorService.VendorServiceClient
+            var client = new VendorService.VendorServiceClient(channel);
 
-app.Run();
+            Console.WriteLine("Sending message to Go Vendor service...");
+            var request = new SendMessageRequest { Message = "Hello from C# client!" };
+
+            // Perform the gRPC call
+            var reply = await client.SendMessageAsync(request);
+
+            Console.WriteLine("Received reply: " + reply.Reply);
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+    }
+}
