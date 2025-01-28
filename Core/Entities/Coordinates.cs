@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core
+namespace Core.Entities
 {
     internal class Coordinates
     {
@@ -13,8 +13,8 @@ namespace Core
 
         public Coordinates(float longitude, float latitude)
         {
-            this._longitude = longitude;
-            this._latitude = latitude;
+            _longitude = longitude;
+            _latitude = latitude;
         }
     }
 }
