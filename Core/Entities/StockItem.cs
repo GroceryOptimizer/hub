@@ -3,13 +3,13 @@
     internal class StockItem
     {
         public int Id { get; set; }
-        private Product _product { get; }
-        private int _amount { get; }
+        public Product Product { get; set; }
+        public int Amount { get; set; }
 
         public StockItem(Product product, int amount)
         {
-            _product = product;
-            _amount = amount;
+            Product = product;
+            Amount = amount;
         }
 
     }

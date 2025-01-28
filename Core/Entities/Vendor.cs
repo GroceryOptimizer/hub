@@ -3,13 +3,13 @@
     internal class Vendor
     {
         public int Id { get; set; }
-        private string _name { get; }
-        private Coordinates _coordinates { get; }
+        public string Name { get; set; }
+        public Coordinates Coordinates { get; set; }
 
         public Vendor(string name, Coordinates coordinates)
         {
-            _name = name;
-            _coordinates = coordinates;
+            Name = name;
+            Coordinates = coordinates;
         }
     }
 }

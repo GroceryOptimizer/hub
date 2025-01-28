@@ -3,11 +3,11 @@
     internal class ShoppingCart
     {
         public int Id { get; set; }
-        private List<StockItem> _cart { get; }
+        public List<StockItem> Cart { get; set; }
 
         public ShoppingCart(List<StockItem> cart)
         {
-            _cart = cart;
+            Cart = cart;
         }
     }
 }
