@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    internal class StockItem
+    public class StockItem
     {
-        private Product _product { get; }
-        private int _ammount { get; }
+        public Product _product { get; }
+        public int _ammount { get; }
 
         public StockItem(Product product, int ammount)
         {

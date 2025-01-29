@@ -25,6 +25,21 @@ namespace HubClient
 
             Console.WriteLine("Received reply: " + reply.Reply);
 
+
+            var inventoryClient = new VendorService.VendorServiceClient(channel);
+            var shoppingCart = new InventoryRequest();
+            shoppingCart.ShoppingCart.Add(new Product { Name = "Milk" });
+            shoppingCart.ShoppingCart.Add(new Product { Name = "Bread" });
+            shoppingCart.ShoppingCart.Add(new Product { Name = "Eggs" });
+
+            var shoppingReply =await inventoryClient.ProductsAsync(shoppingCart);
+
+            Console.WriteLine("Recieved inventory reply with {0} items", shoppingReply.StockItems.Count);
+            foreach (var item in shoppingReply.StockItems)
+            {
+                Console.WriteLine(item.Name + ", costs: " + item.Price);
+            }
+
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }

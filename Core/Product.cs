@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    internal class Product
+    public class Product
     {
         private string _name { get; }
 
