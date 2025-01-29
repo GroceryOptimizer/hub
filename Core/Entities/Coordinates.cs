@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    internal class Coordinates
+    public class Coordinates
     {
         public float Longitude { get; set; }
         public float Latitude { get; set; }

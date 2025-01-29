@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    internal class ShoppingCart
+    public class ShoppingCart
     {
         public int Id { get; set; }
         public List<StockItem> Cart { get; set; }

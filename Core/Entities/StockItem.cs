@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    internal class StockItem
+    public class StockItem
     {
         public int Id { get; set; }
         public Product Product { get; set; }

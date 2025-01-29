@@ -1,6 +1,6 @@
 ﻿namespace Core.Entities
 {
-    internal class VendorVisit
+    public class VendorVisit
     {
         public int Id { get; set; }
         public Vendor Vendor { get; set; }
