@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 
-using Core.DTOs;
-using Core.Entities;
-
 namespace Core
 {
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
         {
+            /*
             // Entity → DTO
             CreateMap<Coordinates, CoordinatesDTO>().ReverseMap();
 
@@ -27,6 +25,7 @@ namespace Core
                 .ForMember(dest => dest.VendorId, opt => opt.MapFrom(src => src.Vendor.Id))
                 .ForMember(dest => dest.VendorName, opt => opt.MapFrom(src => src.Vendor.Name))
                 .ReverseMap();
+            */
         }
     }
 }
