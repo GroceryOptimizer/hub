@@ -10,11 +10,7 @@ namespace Data
         {
         }
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<StockItem> StockItems { get; set; }
-        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
-        public DbSet<VendorVisit> VendorVisits { get; set; }
         public DbSet<Coordinates> Coordinates { get; set; }
     }
 }
