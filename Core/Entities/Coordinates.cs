@@ -6,6 +6,7 @@
         public float Longitude { get; set; }
         public float Latitude { get; set; }
 
+
         public Coordinates(float longitude, float latitude)
         {
             Longitude = longitude;

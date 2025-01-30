@@ -2,12 +2,9 @@
 {
     public class ShoppingCart
     {
-        public int Id { get; set; }
-        public ICollection<StockItem> Cart { get; set; } = new List<StockItem>();
+        public List<Product> Cart { get; set; } = new List<Product>();
 
-        public ShoppingCart() { } // Required for EF Core
-
-        public ShoppingCart(List<StockItem> cart)
+        public ShoppingCart(List<Product> cart)
         {
             Cart = cart;
         }
