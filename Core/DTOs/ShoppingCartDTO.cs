@@ -2,7 +2,6 @@
 {
     public class ShoppingCartDTO
     {
-        public int Id { get; set; }
-        public List<StockItemDTO> Cart { get; set; }
+        public List<ProductDTO> Cart { get; set; }
     }
 }
