@@ -1,10 +1,4 @@
 ﻿namespace Core.DTOs
 {
-    public class VendorDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int CoordinatesId { get; set; }
-        public CoordinatesDTO Coordinates { get; set; }
-    }
+    public record VendorDTO(int Id, string Name, int CoordinatesId, CoordinatesDTO Coordinates);
 }

@@ -67,23 +67,23 @@ namespace Api.Controllers
                 .ToListAsync();
 
             // Map Vendors to DTOs
-            var vendorVisits = vendors.Select(v => new VendorVisitDTO
-            {
-                VendorId = v.Id,
-                Vendor = new VendorDTO
-                {
-                    Id = v.Id,
-                    Name = v.Name,
-                    CoordinatesId = v.Coordinates.Id,
-                    Coordinates = new CoordinatesDTO
-                    {
-                        Id = v.Coordinates.Id,
-                        Latitude = v.Coordinates.Latitude,
-                        Longitude = v.Coordinates.Longitude
-                    }
-                },
-                StockItems = new List<StockItemDTO>()
-            }).ToList();
+            var vendorVisits = vendors.Select(v =>
+            new VendorVisitDTO(
+                v.Id,
+                new VendorDTO
+                (
+                    v.Id,
+                    v.Name,
+                    v.Coordinates.Id,
+                    new CoordinatesDTO
+                    (
+                        v.Coordinates.Id,
+                        v.Coordinates.Latitude,
+                        v.Coordinates.Longitude
+                    )
+                ),
+                new List<StockItemDTO>()
+            )).ToList();
 
             return vendorVisits;
         }
