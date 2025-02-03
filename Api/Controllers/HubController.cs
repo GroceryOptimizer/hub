@@ -1,5 +1,4 @@
 ﻿using Core.DTOs;
-using Core.Entities;
 
 using Data;
 
@@ -15,49 +14,21 @@ namespace Api.Controllers
         private readonly ApplicationDbContext _context;
 
         // Temp seed variables
-        private List<StockItem> stockItemsSeed = new List<StockItem>
+        private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
             {
-                new StockItem(new Product("Apple"), 2),
-                new StockItem(new Product("Banana"), 1),
-                new StockItem(new Product("Carrot"), 3),
-                new StockItem(new Product("Bread"), 5),
-                new StockItem(new Product("Milk"), 4)
+                new StockItemDTO(new ProductDTO("Apple"), 2),
+                new StockItemDTO(new ProductDTO("Banana"), 1),
+                new StockItemDTO(new ProductDTO("Carrot"), 3),
+                new StockItemDTO(new ProductDTO("Bread"), 5),
+                new StockItemDTO(new ProductDTO("Milk"), 4)
             };
-
-        private List<VendorVisit> vendorVisitsSeed = new List<VendorVisit>
-        {
-        new VendorVisit(
-            new Vendor { Name = "Fresh Market", CoordinatesId = 1 },
-            new List<StockItem>
-            {
-                new StockItem(new Product("Apple"), 2),
-                new StockItem(new Product("Banana"), 1)
-            }
-        ),
-        new VendorVisit(
-            new Vendor { Name = "Organic Foods", CoordinatesId = 2 },
-            new List<StockItem>
-            {
-                new StockItem(new Product("Carrot"), 3),
-                new StockItem(new Product("Lettuce"), 2)
-            }
-        ),
-        new VendorVisit(
-            new Vendor { Name = "Healthy Bites", CoordinatesId = 3 },
-            new List<StockItem>
-            {
-                new StockItem(new Product("Milk"), 4),
-                new StockItem(new Product("Yogurt"), 5)
-            }
-        )
-        };
 
         public HubController(ApplicationDbContext context)
         {
             this._context = context;
         }
 
-        // GET: skriv endpoint här (t.ex. api/movies)
+        // Test GET function that returns VendorVisits from all Vendors in the db
         [HttpGet]
         public async Task<IEnumerable<VendorVisitDTO>> GetVendorVisitsAsync()
         {
@@ -82,7 +53,7 @@ namespace Api.Controllers
                         v.Coordinates.Longitude
                     )
                 ),
-                new List<StockItemDTO>()
+                new List<StockItemDTO>(stockItemsSeed)
             )).ToList();
 
             return vendorVisits;
