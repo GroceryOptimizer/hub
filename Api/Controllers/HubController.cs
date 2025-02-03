@@ -66,6 +66,11 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> PostCart(ShoppingCartDTO cart)
         {
             // todo: early exit if bad input
+            // pass cart to GRPC API call
+            // await response from GRPC API
+            // parse response to VendorVisitDTOs (find vendor in db by vendor id)
+            // create VendorVisitDTO list to return
+
             return null;
         }
     }
