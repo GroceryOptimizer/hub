@@ -59,6 +59,33 @@ namespace Api.Controllers
             return vendorVisits;
         }
 
+        // Test GET, same code as above BUT more LINQ focused
+        [HttpGet("linq")]
+        public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> GetVendorVisitsLinq()
+        {
+            var dtoList = await _context.Vendors
+                .Include(v => v.Coordinates) // Ensure Coordinates are loaded
+                .Select(v => new VendorVisitDTO(
+                    v.Id, // Assuming VendorVisitDTO requires an ID
+                    new VendorDTO(
+                        v.Id,
+                        v.Name,
+                        v.Coordinates != null ? v.Coordinates.Id : 0, // Provide the missing CoordinatesId
+                        v.Coordinates != null
+                            ? new CoordinatesDTO(v.Coordinates.Id, v.Coordinates.Latitude, v.Coordinates.Longitude)
+                            : null // No default values
+                    ),
+                    new List<StockItemDTO>(stockItemsSeed) // Ensure stock items are passed
+                )).ToListAsync();
+
+            if (!dtoList.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(dtoList);
+        }
+
         // POST:
         // input: Shopping Cart DTO
         // return: Collection of Vendor Visit DTOs
