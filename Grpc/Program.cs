@@ -30,7 +30,7 @@ namespace HubClient
             var shoppingCart = new InventoryRequest();
             shoppingCart.ShoppingCart.Add(new Product { Name = "Milk" });
             shoppingCart.ShoppingCart.Add(new Product { Name = "Bread" });
-            shoppingCart.ShoppingCart.Add(new Product { Name = "Eggs" });
+            shoppingCart.ShoppingCart.Add(new Product { Name = "cheese" });
 
             var shoppingReply =await inventoryClient.ProductsAsync(shoppingCart);
 
@@ -40,6 +40,12 @@ namespace HubClient
                 Console.WriteLine(item.Name + ", costs: " + item.Price);
             }
 
+            var storeRequest = new StoreRequest();
+            storeRequest.Message = "Send store info";
+
+            var storeReply = await inventoryClient.StoreAsync(storeRequest);
+
+            Console.WriteLine("Store response:", storeReply);
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
