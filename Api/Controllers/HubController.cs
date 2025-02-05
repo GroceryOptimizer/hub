@@ -90,12 +90,19 @@ namespace Api.Controllers
             return Ok(dtoList);
         }
 
-        [HttpGet("test")]
-        public async Task<VendorVisitDTO> GetTest()
+        [HttpGet("testSendMessage")]
+        public async Task<VendorVisitDTO> GetTestSendMessage()
         {
             var sendMsg = await _vendorConnectorService.SendMessageAsync("Hello from Controller");
             Console.WriteLine(sendMsg);
 
+            return null;
+        }
+
+        [HttpGet("testGetInventory")]
+        public async Task<VendorVisitDTO> GetTestInventory()
+        {
+            var sendInventoryRequest = await _vendorConnectorService.GetInventoryAsync();
 
             return null;
         }

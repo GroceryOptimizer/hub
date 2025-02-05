@@ -1,4 +1,6 @@
-﻿using Grpc.Net.Client;
+﻿using Core.DTOs;
+
+using Grpc.Net.Client;
 
 using VendorProto;
 
@@ -22,22 +24,44 @@ namespace Api.Services
             return reply.Reply;
         }
 
-        /*
-        public async Task<List<StockItemDTO>> GetInventoryAsync(ShoppingCartDTO cart)
+
+        public async Task<List<StockItemDTO>> GetInventoryAsync()//(ShoppingCartDTO cart)
         {
             var inventoryRequest = new InventoryRequest();
 
-            foreach (var product in cart.Products)
-            {
-                inventoryRequest.ShoppingCart.Add(new Product { Name = product.Name });
-            }
+            Console.WriteLine("building cart..");
 
+            /*
+            foreach (var product in cart.Cart)
+            {
+                inventoryRequest.ShoppingCart.Add(new VendorProto.Product { Name = product.Name });
+            }
+            */
+            // temp cart building
+            inventoryRequest.ShoppingCart.Add(new Product { Name = "Milk" });
+            inventoryRequest.ShoppingCart.Add(new Product { Name = "Bread" });
+            inventoryRequest.ShoppingCart.Add(new Product { Name = "Eggs" });
+
+            Console.WriteLine(inventoryRequest.ShoppingCart);
+            Console.WriteLine("cart built..");
+            Console.WriteLine("sending request..");
             var response = await _client.ProductsAsync(inventoryRequest);
+            Console.WriteLine("response recieved..");
+            Console.WriteLine("print entire response..");
+            Console.WriteLine(response);
+            Console.WriteLine("print response.StockItems..");
+            Console.WriteLine(response.StockItems);
+            Console.WriteLine("printing through foreach..");
+            foreach (var item in response.StockItems)
+            {
+                Console.WriteLine("Name: " + item.Name + ", Price: " + item.Price);
+            }
+            Console.WriteLine("returning from GetInventoryAsync");
 
             return response.StockItems
                 .Select(item => new StockItemDTO(new ProductDTO(item.Name), item.Price))
                 .ToList();
         }
-        */
+
     }
 }
