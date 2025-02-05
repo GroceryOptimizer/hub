@@ -1,4 +1,6 @@
-﻿using Core.DTOs;
+﻿using Api.Services;
+
+using Core.DTOs;
 
 using Data;
 
@@ -12,6 +14,7 @@ namespace Api.Controllers
     public class HubController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IVendorConnectorService _vendorConnectorService;
 
         // Temp seed variables
         private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
@@ -23,9 +26,10 @@ namespace Api.Controllers
                 new StockItemDTO(new ProductDTO("Milk"), 4)
             };
 
-        public HubController(ApplicationDbContext context)
+        public HubController(ApplicationDbContext context, IVendorConnectorService vendorConnectorService)
         {
             this._context = context;
+            this._vendorConnectorService = vendorConnectorService;
         }
 
         // Test GET function that returns VendorVisits from all Vendors in the db
@@ -84,6 +88,16 @@ namespace Api.Controllers
             }
 
             return Ok(dtoList);
+        }
+
+        [HttpGet("test")]
+        public async Task<VendorVisitDTO> GetTest()
+        {
+            var sendMsg = await _vendorConnectorService.SendMessageAsync("Hello from Controller");
+            Console.WriteLine(sendMsg);
+
+
+            return null;
         }
 
         // POST:
