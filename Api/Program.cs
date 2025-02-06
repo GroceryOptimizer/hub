@@ -16,15 +16,17 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
             // Configure Kestrel to allow HTTP/2 on HTTP endpoints.
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenAnyIP(5241, listenOptions =>
                 {
                     // Force HTTP/2 without TLS (not recommended for production)
-                    listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                    listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                 });
             });
+
 
             // Services
             // Database
@@ -54,9 +56,24 @@ namespace Api
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                // Enable Swagger and force it to use HTTP/2
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            /*
+            // Require HTTP/2 for all requests, including Swagger
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Protocol != "HTTP/2")
+                {
+                    context.Response.StatusCode = StatusCodes.Status505HttpVersionNotsupported;
+                    await context.Response.WriteAsync("HTTP/1.x not supported. Use HTTP/2.");
+                    return;
+                }
+                await next();
+            });
+            */
 
             app.MapGrpcService<HubServer>();
 
