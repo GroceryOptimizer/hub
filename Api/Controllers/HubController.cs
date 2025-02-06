@@ -1,4 +1,6 @@
-﻿using Core.DTOs;
+﻿using Api.Services;
+
+using Core.DTOs;
 
 using Data;
 
@@ -12,6 +14,7 @@ namespace Api.Controllers
     public class HubController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IVendorConnectorService _vendorConnectorService;
 
         // Temp seed variables
         private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
@@ -23,9 +26,10 @@ namespace Api.Controllers
                 new StockItemDTO(new ProductDTO("Milk"), 4)
             };
 
-        public HubController(ApplicationDbContext context)
+        public HubController(ApplicationDbContext context, IVendorConnectorService vendorConnectorService)
         {
             this._context = context;
+            this._vendorConnectorService = vendorConnectorService;
         }
 
         // Test GET function that returns VendorVisits from all Vendors in the db
@@ -57,6 +61,50 @@ namespace Api.Controllers
             )).ToList();
 
             return vendorVisits;
+        }
+
+        // Test GET, same code as above BUT more LINQ focused
+        [HttpGet("linq")]
+        public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> GetVendorVisitsLinq()
+        {
+            var dtoList = await _context.Vendors
+                .Include(v => v.Coordinates) // Ensure Coordinates are loaded
+                .Select(v => new VendorVisitDTO(
+                    v.Id, // Assuming VendorVisitDTO requires an ID
+                    new VendorDTO(
+                        v.Id,
+                        v.Name,
+                        v.Coordinates != null ? v.Coordinates.Id : 0, // Provide the missing CoordinatesId
+                        v.Coordinates != null
+                            ? new CoordinatesDTO(v.Coordinates.Id, v.Coordinates.Latitude, v.Coordinates.Longitude)
+                            : null // No default values
+                    ),
+                    new List<StockItemDTO>(stockItemsSeed) // Ensure stock items are passed
+                )).ToListAsync();
+
+            if (!dtoList.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(dtoList);
+        }
+
+        [HttpGet("testSendMessage")]
+        public async Task<VendorVisitDTO> GetTestSendMessage()
+        {
+            var sendMsg = await _vendorConnectorService.SendMessageAsync("Hello from Controller");
+            Console.WriteLine(sendMsg);
+
+            return null;
+        }
+
+        [HttpGet("testGetInventory")]
+        public async Task<VendorVisitDTO> GetTestInventory()
+        {
+            var sendInventoryRequest = await _vendorConnectorService.GetInventoryAsync();
+
+            return null;
         }
 
         // POST:

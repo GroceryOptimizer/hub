@@ -1,3 +1,5 @@
+using Api.Services;
+
 using Core;
 
 using Data;
@@ -26,6 +28,9 @@ namespace Api
 
             // Controllers
             builder.Services.AddControllers();
+
+            // Register GRPC Connector Service
+            builder.Services.AddScoped<IVendorConnectorService, VendorConnectorService>();
 
             var app = builder.Build();
 
