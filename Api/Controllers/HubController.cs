@@ -15,7 +15,7 @@ namespace Api.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConnectorService _vendorConnectorService;
-        //test comment
+
         // Temp seed variables
         private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
             {
