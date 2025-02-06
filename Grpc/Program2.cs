@@ -1,6 +1,6 @@
 ﻿using Grpc.Net.Client;
 
-using VendorProto;  // The namespace we specified in the proto file
+using StoreProto;  // The namespace we specified in the proto file
 
 namespace HubClient
 {
@@ -24,11 +24,11 @@ namespace HubClient
                 // Create new channel from current index in "_channels"
                 using var channel = GrpcChannel.ForAddress(currentChannel);
                 // The generated client is VendorService.VendorServiceClient
-                var client = new VendorService.VendorServiceClient(channel);
+                var client = new StoreService.StoreServiceClient(channel);
 
                 Console.WriteLine("Sending gRPC request");
                 // Setup all variables needed for the gRPC call
-                var inventoryClient = new VendorService.VendorServiceClient(channel);
+                var inventoryClient = new StoreService.StoreServiceClient(channel);
                 var shoppingCart = new InventoryRequest();
                 int vendorId;
 

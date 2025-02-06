@@ -2,19 +2,19 @@
 
 using Grpc.Net.Client;
 
-using VendorProto;
+using StoreProto;
 
 namespace Api.Services
 {
     public class VendorConnectorService : IVendorConnectorService
     {
-        private readonly VendorService.VendorServiceClient _client;
+        private readonly StoreService.StoreServiceClient _client;
 
         public VendorConnectorService()
         {
             // todo: maybe accept port as parameter
             var channel = GrpcChannel.ForAddress("http://localhost:50051");
-            _client = new VendorService.VendorServiceClient(channel);
+            _client = new StoreService.StoreServiceClient(channel);
         }
 
         public async Task<string> SendMessageAsync(string message)
