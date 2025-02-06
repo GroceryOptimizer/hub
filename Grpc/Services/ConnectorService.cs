@@ -6,11 +6,11 @@ using StoreProto;
 
 namespace Api.Services
 {
-    public class VendorConnectorService : IVendorConnectorService
+    public class ConnectorService : IConnectorService
     {
         private readonly StoreService.StoreServiceClient _client;
 
-        public VendorConnectorService()
+        public ConnectorService()
         {
             // todo: maybe accept port as parameter
             var channel = GrpcChannel.ForAddress("http://localhost:50051");

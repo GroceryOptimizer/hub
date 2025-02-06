@@ -2,7 +2,7 @@
 
 namespace Api.Services
 {
-    public interface IVendorConnectorService
+    public interface IConnectorService
     {
         Task<string> SendMessageAsync(string message);
         Task<List<StockItemDTO>> GetInventoryAsync();

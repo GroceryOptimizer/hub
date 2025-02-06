@@ -14,7 +14,7 @@ namespace Api.Controllers
     public class HubController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IVendorConnectorService _vendorConnectorService;
+        private readonly IConnectorService _vendorConnectorService;
 
         // Temp seed variables
         private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
@@ -26,7 +26,7 @@ namespace Api.Controllers
                 new StockItemDTO(new ProductDTO("Milk"), 4)
             };
 
-        public HubController(ApplicationDbContext context, IVendorConnectorService vendorConnectorService)
+        public HubController(ApplicationDbContext context, IConnectorService vendorConnectorService)
         {
             this._context = context;
             this._vendorConnectorService = vendorConnectorService;
