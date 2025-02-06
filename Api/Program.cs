@@ -4,6 +4,8 @@ using Core;
 
 using Data;
 
+using Grpc.Services;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Api
@@ -13,6 +15,16 @@ namespace Api
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Configure Kestrel to allow HTTP/2 on HTTP endpoints.
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(5241, listenOptions =>
+                {
+                    // Force HTTP/2 without TLS (not recommended for production)
+                    listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                });
+            });
 
             // Services
             // Database
@@ -29,10 +41,15 @@ namespace Api
             // Controllers
             builder.Services.AddControllers();
 
-            // Register GRPC Connector Service
-            builder.Services.AddScoped<IVendorConnectorService, VendorConnectorService>();
+            // Register Connector Service
+            builder.Services.AddScoped<IConnectorService, ConnectorService>();
+
+            // Register GRPC Service
+            builder.Services.AddGrpc();
 
             var app = builder.Build();
+
+            //app.MapGet("api/hub", () => Results.Json(new { message = "Only HTTP/2 is allowed!" }));
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -40,6 +57,8 @@ namespace Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.MapGrpcService<HubServer>();
 
             // Seed data if empty db
             using (var scope = app.Services.CreateScope())
