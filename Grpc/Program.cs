@@ -1,47 +1,23 @@
-using System;
-using System.Threading.Tasks;
+using Grpc.Services;
 
-using Grpc.Net.Client;
+var builder = WebApplication.CreateBuilder(args);
 
-using VendorProto;  // The namespace we specified in the proto file
-
-namespace HubClient
+// Configure Kestrel to allow HTTP/2 on HTTP endpoints.
+builder.WebHost.ConfigureKestrel(options =>
 {
-    class Program
+    options.ListenLocalhost(5241, listenOptions =>
     {
-        static async Task Main(string[] args)
-        {
-            // The server is listening on localhost:50051
-            using var channel = GrpcChannel.ForAddress("http://localhost:50051");
+        // Force HTTP/2 without TLS (not recommended for production)
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+    });
+});
 
-            // The generated client is VendorService.VendorServiceClient
-            var client = new VendorService.VendorServiceClient(channel);
+builder.Services.AddGrpc();
 
-            Console.WriteLine("Sending message to Go Vendor service...");
-            var request = new SendMessageRequest { Message = "Hello from C# client!" };
+var app = builder.Build();
 
-            // Perform the gRPC call
-            var reply = await client.SendMessageAsync(request);
+// Configure the HTTP request pipeline.
+app.MapGrpcService<HubServer>();
+//app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-            Console.WriteLine("Received reply: " + reply.Reply);
-
-
-            var inventoryClient = new VendorService.VendorServiceClient(channel);
-            var shoppingCart = new InventoryRequest();
-            shoppingCart.ShoppingCart.Add(new Product { Name = "Milk" });
-            shoppingCart.ShoppingCart.Add(new Product { Name = "Bread" });
-            shoppingCart.ShoppingCart.Add(new Product { Name = "Eggs" });
-
-            var shoppingReply =await inventoryClient.ProductsAsync(shoppingCart);
-
-            Console.WriteLine("Recieved inventory reply with {0} items", shoppingReply.StockItems.Count);
-            foreach (var item in shoppingReply.StockItems)
-            {
-                Console.WriteLine(item.Name + ", costs: " + item.Price);
-            }
-
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
-        }
-    }
-}
+app.Run();
