@@ -4,10 +4,10 @@ using StoreProto;  // The namespace we specified in the proto file
 
 namespace HubClient
 {
-    class Program
+    public class StoreController
     {
 
-        static async Task Main(string[] args)
+        public static async Task Connect()
         {
             var channels = new[]
             {

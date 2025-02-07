@@ -6,6 +6,8 @@ using Data;
 
 using Grpc.Services;
 
+using HubClient;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Api
@@ -15,7 +17,6 @@ namespace Api
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
 
             // Configure Kestrel to allow HTTP/2 on HTTP endpoints.
             builder.WebHost.ConfigureKestrel(options =>

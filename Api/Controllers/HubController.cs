@@ -1,11 +1,14 @@
 ﻿using Api.Services;
 
+using Grpc;
+
 using Core.DTOs;
 
 using Data;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HubClient;
 
 namespace Api.Controllers
 {
@@ -37,6 +40,7 @@ namespace Api.Controllers
         public async Task<IEnumerable<VendorVisitDTO>> GetVendorVisitsAsync()
         {
             // Fetch Vendors and include related Coordinates
+            
             var vendors = await _context.Vendors
                 .Include(v => v.Coordinates)
                 .ToListAsync();
@@ -120,6 +124,12 @@ namespace Api.Controllers
             // create VendorVisitDTO list to return
 
             return null;
+        }
+
+        [HttpGet("AnotherTestGet")]
+        public async void AnotherTest()
+        {
+            await StoreController.Connect();
         }
     }
 }
