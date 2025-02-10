@@ -56,85 +56,90 @@ For those who prefer the terminal, follow these steps:
    ```sh
    dotnet run --project Api --launch-profile "http"
    ```  
-
+<details>
+   <summary>Click to expand API Reference 🔴 **Work in Progress**  </summary>
+   
 ## API Reference  🔴 **Work in Progress**  
->⚠️ **Work in Progress:** These API endpoints are not finalized.
->### REST API Endpoints (Client Communication)  
->#### `GET /api/products`  
->**Description:** Fetches a list of available products.  
->**Request Parameters:** None  
->**Response:**  
->```json
->[
->  {
->    "id": 1,
->    "name": "Apples",
->    "price": 2.99,
->    "stock": 150
->  },
->  {
->    "id": 2,
->    "name": "Bananas",
->    "price": 1.99,
->    "stock": 200
->  }
->]
->```  
->
->#### `POST /api/order`  
->**Description:** Places an order.  
->**Request Body:**  
->```json
->{
->  "customerId": 123,
->  "items": [
->    { "productId": 1, "quantity": 5 },
->    { "productId": 2, "quantity": 3 }
->  ]
->}
->```  
->**Response:**  
->```json
->{
->  "orderId": 456,
->  "status": "Confirmed"
->}
->```  
->
->### gRPC Endpoints (Store Communication)  
->
->#### `CheckStock`  
->**Description:** Checks stock availability for a product.  
->**Request:**  
->```proto
->message StockRequest {
->  int32 productId = 1;
->}
->```  
->**Response:**  
->```proto
->message StockResponse {
->  int32 productId = 1;
->  int32 availableQuantity = 2;
->}
->```  
->
->#### `ProcessOrder`  
->**Description:** Processes an order request.  
->**Request:**  
->```proto
->message OrderRequest {
->  int32 orderId = 1;
->}
->```  
->**Response:**  
->```proto
->message OrderResponse {
->  int32 orderId = 1;
->  string status = 2;
->}
->```  
->
+⚠️ **Work in Progress:** These API endpoints are not finalized.
+   
+### REST API Endpoints (Client Communication)  
+#### `GET /api/products`  
+**Description:** Fetches a list of available products.  
+**Request Parameters:** None  
+**Response:**  
+```json
+[
+  {
+    "id": 1,
+    "name": "Apples",
+    "price": 2.99,
+    "stock": 150
+  },
+  {
+    "id": 2,
+    "name": "Bananas",
+    "price": 1.99,
+    "stock": 200
+  }
+]
+```  
+
+#### `POST /api/order`  
+**Description:** Places an order.  
+**Request Body:**  
+```json
+{
+  "customerId": 123,
+  "items": [
+    { "productId": 1, "quantity": 5 },
+    { "productId": 2, "quantity": 3 }
+  ]
+}
+```  
+**Response:**  
+```json
+{
+  "orderId": 456,
+  "status": "Confirmed"
+}
+```  
+
+### gRPC Endpoints (Store Communication)  
+
+#### `CheckStock`  
+**Description:** Checks stock availability for a product.  
+**Request:**  
+```proto
+message StockRequest {
+  int32 productId = 1;
+}
+```  
+**Response:**  
+```proto
+message StockResponse {
+  int32 productId = 1;
+  int32 availableQuantity = 2;
+}
+```  
+
+#### `ProcessOrder`  
+**Description:** Processes an order request.  
+**Request:**  
+```proto
+message OrderRequest {
+  int32 orderId = 1;
+}
+```  
+**Response:**  
+```proto
+message OrderResponse {
+  int32 orderId = 1;
+  string status = 2;
+}
+```  
+
+   </details>    
+       
 ## Usage  
 - Start within **30 seconds** after launching the Docker containers.  
 
