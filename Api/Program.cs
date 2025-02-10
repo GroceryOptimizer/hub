@@ -26,7 +26,7 @@ namespace Api
                     listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
                 });
                 //Port for HTTP/2 requests
-                options.ListenAnyIP(5241, listenoptions =>
+                options.Listen(System.Net.IPAddress.Any, 5241, listenoptions =>
                 {
                     listenoptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
                 });
