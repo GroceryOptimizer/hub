@@ -9,6 +9,7 @@ using Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HubClient;
+using Core.Entities;
 
 namespace Api.Controllers
 {
@@ -119,17 +120,23 @@ namespace Api.Controllers
         {
             // todo: early exit if bad input
             // pass cart to GRPC API call
-            // await response from GRPC API
+                //Parse DTO cart to normal Products
+            List<Product> products = cart.Cart.Select(p => new Product(p.Name)).ToList();
+                //Create ShoppingCart with this list of Product's
+            ShoppingCart cartToSend = new ShoppingCart(products);
+            //Call the gRPC function to send the request and await response from GRPC API
+            Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend);
             // parse response to VendorVisitDTOs (find vendor in db by vendor id)
+
             // create VendorVisitDTO list to return
 
             return null;
         }
 
-        [HttpGet("AnotherTestGet")]
-        public async void AnotherTest()
-        {
-            await StoreController.Connect();
-        }
+        //[HttpGet("AnotherTestGet")]
+        //public async void AnotherTest()
+        //{
+        //    await StoreController.Connect();
+        //}
     }
 }
