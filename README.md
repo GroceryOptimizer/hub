@@ -144,8 +144,8 @@ message OrderResponse {
 - Start within **30 seconds** after launching the Docker containers.  
 
 ## Contributors  
-- [vikkoooo](https://github.com/vikkoooo)  
-- [RikiRhen](https://github.com/RikiRhen)  
-- [Raiu](https://github.com/Raiu)  
 - [KikiBerg](https://github.com/KikiBerg)  
+- [Raiu](https://github.com/Raiu)  
+- [RikiRhen](https://github.com/RikiRhen)  
 - [Syldriem](https://github.com/Syldriem)  
+- [vikkoooo](https://github.com/vikkoooo)  
