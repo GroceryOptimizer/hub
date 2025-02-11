@@ -17,23 +17,6 @@ namespace Api
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Configure Kestrel to allow HTTP/2 on HTTP endpoints.
-            builder.WebHost.ConfigureKestrel(options =>
-            {
-                //Port for HTTP 1.x requests
-                options.ListenAnyIP(7049, listenOptions =>
-                {
-                    listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
-                });
-                //Port for HTTP/2 requests
-                options.ListenAnyIP(5241, listenoptions =>
-                {
-                    listenoptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-                });
-            });
-
-
             // Services
             // Database
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
