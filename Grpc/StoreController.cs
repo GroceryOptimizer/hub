@@ -38,10 +38,11 @@ namespace HubClient
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
                 //Parse the request to workable DTOs and check for duplicates
 
-                //1: Check if item already exists in 'collectedReply'.
+                //0: Loop through each StockItem in the reply from this Store
                 foreach (var stockItem in shoppingReply.StockItems)
                 {
                     StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Name), stockItem.Price);
+                    //1: Check if item already exists in 'collectedReply'.
                     if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
                     {
                         //2: If is - ignore the item, don't add it anywhere.
