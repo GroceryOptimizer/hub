@@ -1,12 +1,8 @@
-using Api.Services;
-
 using Core;
 
 using Data;
 
 using Grpc.Services;
-
-using HubClient;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -32,9 +28,6 @@ namespace Api
             // Controllers
             builder.Services.AddControllers();
 
-            // Register Connector Service
-            builder.Services.AddScoped<IConnectorService, ConnectorService>();
-
             // Register GRPC Service
             builder.Services.AddGrpc();
 
@@ -47,7 +40,7 @@ namespace Api
                 app.UseSwaggerUI();
             }
 
-
+            // Listen on GRPC handshake
             app.MapGrpcService<HubServer>();
 
             // Seed data if empty db

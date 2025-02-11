@@ -1,15 +1,12 @@
-﻿using Api.Services;
-
-using Grpc;
-
-using Core.DTOs;
+﻿using Core.DTOs;
+using Core.Entities;
 
 using Data;
 
+using HubClient;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HubClient;
-using Core.Entities;
 
 namespace Api.Controllers
 {
@@ -18,98 +15,10 @@ namespace Api.Controllers
     public class HubController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConnectorService _vendorConnectorService;
 
-        // Temp seed variables
-        private List<StockItemDTO> stockItemsSeed = new List<StockItemDTO>
-            {
-                new StockItemDTO(new ProductDTO("Apple"), 2),
-                new StockItemDTO(new ProductDTO("Banana"), 1),
-                new StockItemDTO(new ProductDTO("Carrot"), 3),
-                new StockItemDTO(new ProductDTO("Bread"), 5),
-                new StockItemDTO(new ProductDTO("Milk"), 4)
-            };
-
-        public HubController(ApplicationDbContext context, IConnectorService connectorService)
+        public HubController(ApplicationDbContext context)
         {
             this._context = context;
-            this._vendorConnectorService = connectorService;
-        }
-
-        // Test GET function that returns VendorVisits from all Vendors in the db
-        [HttpGet]
-        public async Task<IEnumerable<VendorVisitDTO>> GetVendorVisitsAsync()
-        {
-            // Fetch Vendors and include related Coordinates
-            
-            var vendors = await _context.Vendors
-                .Include(v => v.Coordinates)
-                .ToListAsync();
-
-            // Map Vendors to DTOs
-            var vendorVisits = vendors.Select(v =>
-            new VendorVisitDTO(
-                v.Id,
-                new VendorDTO
-                (
-                    v.Id,
-                    v.Name,
-                    v.Coordinates.Id,
-                    new CoordinatesDTO
-                    (
-                        v.Coordinates.Id,
-                        v.Coordinates.Latitude,
-                        v.Coordinates.Longitude
-                    )
-                ),
-                new List<StockItemDTO>(stockItemsSeed)
-            )).ToList();
-
-            return vendorVisits;
-        }
-
-        // Test GET, same code as above BUT more LINQ focused
-        [HttpGet("linq")]
-        public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> GetVendorVisitsLinq()
-        {
-            var dtoList = await _context.Vendors
-                .Include(v => v.Coordinates) // Ensure Coordinates are loaded
-                .Select(v => new VendorVisitDTO(
-                    v.Id, // Assuming VendorVisitDTO requires an ID
-                    new VendorDTO(
-                        v.Id,
-                        v.Name,
-                        v.Coordinates != null ? v.Coordinates.Id : 0, // Provide the missing CoordinatesId
-                        v.Coordinates != null
-                            ? new CoordinatesDTO(v.Coordinates.Id, v.Coordinates.Latitude, v.Coordinates.Longitude)
-                            : null // No default values
-                    ),
-                    new List<StockItemDTO>(stockItemsSeed) // Ensure stock items are passed
-                )).ToListAsync();
-
-            if (!dtoList.Any())
-            {
-                return NotFound();
-            }
-
-            return Ok(dtoList);
-        }
-
-        [HttpGet("testSendMessage")]
-        public async Task<VendorVisitDTO> GetTestSendMessage()
-        {
-            var sendMsg = await _vendorConnectorService.SendMessageAsync("Hello from Controller");
-            Console.WriteLine(sendMsg);
-
-            return null;
-        }
-
-        [HttpGet("testGetInventory")]
-        public async Task<VendorVisitDTO> GetTestInventory()
-        {
-            var sendInventoryRequest = await _vendorConnectorService.GetInventoryAsync();
-
-            return null;
         }
 
         // POST:
@@ -124,9 +33,9 @@ namespace Api.Controllers
                 return BadRequest("Cart was found empty or nonexistant.");
             }
             // pass cart to GRPC API call
-                //Parse DTO cart to normal Products
+            //Parse DTO cart to normal Products
             List<Product> products = cart.Cart.Select(p => new Product(p.Name)).ToList();
-                //Create ShoppingCart with this list of Product's
+            //Create ShoppingCart with this list of Product's
             ShoppingCart cartToSend = new ShoppingCart(products);
             //Call the gRPC function to send the request and await response from GRPC API
             Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend);
@@ -156,11 +65,5 @@ namespace Api.Controllers
 
             return Ok(returnList);
         }
-
-        //[HttpGet("AnotherTestGet")]
-        //public async void AnotherTest()
-        //{
-        //    await StoreController.Connect();
-        //}
     }
 }
