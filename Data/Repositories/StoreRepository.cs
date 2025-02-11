@@ -18,7 +18,7 @@ public class StoreRepository : IStoreRepository
         return await _context.Stores.ToListAsync();
     }
 
-    public async Task<int> AddStore(Store store)
+    public async Task<int> Add(Store store)
     {
         _context.Stores.Add(store);
         return await _context.SaveChangesAsync();

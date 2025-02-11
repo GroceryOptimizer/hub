@@ -2,14 +2,16 @@ using Api.Grpc;
 using Api.Services;
 using Core.Mapper;
 using Data;
+using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<CartService, CartService>();
-builder.Services.AddScoped<StoreService, StoreService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IStoreService, StoreService>();
+builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();

@@ -1,22 +1,25 @@
 using Grpc.Core;
-using Microsoft.CodeAnalysis;
 using StoreProto;
 
 namespace Api.Grpc;
 
 public class HubServer : HubService.HubServiceBase
 {
-    public HubServer() { }
+    private readonly IStoreRepository _storeRepo;
 
-    public override Task<HandShakeResponse> HandShake(
+    public HubServer(IStoreRepository storeRepository)
+    {
+        _storeRepo = storeRepository;
+    }
+
+    public override async Task<HandShakeResponse> HandShake(
         HandShakeRequest request,
         ServerCallContext context
     )
     {
         var store = ParseStore(request);
-        Console.WriteLine("Received handshake from Go Vendor service: " + request.Store);
-
-        return Task.FromResult(new HandShakeResponse { Id = Guid.NewGuid().ToString() });
+        await _storeRepo.Add(store);
+        return new() { Id = store.Id.ToString() };
     }
 
     private static Core.Entities.Store ParseStore(HandShakeRequest req)
@@ -26,6 +29,7 @@ public class HubServer : HubService.HubServiceBase
             Id = Guid.NewGuid(),
             Name = req.Store.Name,
             Location = null!,
+            GrpcAdress = req.GrpcAddress,
         };
 
         return newStore;

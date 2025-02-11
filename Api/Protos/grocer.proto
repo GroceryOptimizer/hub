@@ -20,6 +20,7 @@ message Store{
 
 message HandShakeRequest{
   Store store = 1;
+  string grpcAddress = 2;
 }
 
 message HandShakeResponse{
