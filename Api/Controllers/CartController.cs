@@ -1,4 +1,3 @@
-using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -7,7 +6,12 @@ namespace Api.Controllers;
 [ApiController]
 public class CartController : ControllerBase
 {
-    private readonly CartService _cartService = new();
+    private readonly ICartService _cartService;
+
+    public CartController(ICartService cartService)
+    {
+        _cartService = cartService;
+    }
 
     [HttpPost]
     public async Task<ActionResult<CartRes>> FindStoresByCart([FromBody] CartReq cart)

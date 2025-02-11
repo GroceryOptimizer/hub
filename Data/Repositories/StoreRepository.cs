@@ -13,6 +13,8 @@ public class StoreRepository : IStoreRepository
         _context = context;
     }
 
+    public IQueryable<Store> Query() => _context.Stores;
+
     public async Task<List<Store>> GetAllStores()
     {
         return await _context.Stores.ToListAsync();

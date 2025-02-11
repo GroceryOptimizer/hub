@@ -1,3 +1,5 @@
+using Core.Entities;
+
 namespace Api.Models;
 
 public record CartRes

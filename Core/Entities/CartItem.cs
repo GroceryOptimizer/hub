@@ -1,6 +1,4 @@
-using Core.Entities;
-
-namespace Api.Models;
+namespace Core.Entities;
 
 public class CartItem
 {
