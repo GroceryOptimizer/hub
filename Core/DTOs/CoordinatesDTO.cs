@@ -1,8 +1,4 @@
 ﻿namespace Core.DTOs
 {
-    public class CoordinatesDTO
-    {
-        public float Longitude { get; set; }
-        public float Latitude { get; set; }
-    }
+    public record CoordinatesDTO(int Id, float Longitude, float Latitude);
 }

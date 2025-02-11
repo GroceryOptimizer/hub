@@ -1,8 +1,4 @@
 ﻿namespace Core.DTOs
 {
-    public class ProductDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    public record ProductDTO(string Name);
 }
