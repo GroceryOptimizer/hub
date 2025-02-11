@@ -19,7 +19,7 @@ namespace HubClient
                 "http://localhost:50052",
                 "http://localhost:50053"
             };
-            int placeholderVendorId = 0;
+            int placeholderVendorId = 1;
 
             //###########################################################################################
             //Local variable to store all replies
@@ -37,22 +37,26 @@ namespace HubClient
                 Console.WriteLine("Sending gRPC request now.");
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
                 //Parse the request to workable DTOs and check for duplicates
-                if (!collectedReply.ContainsKey(placeholderVendorId))
-                {
-                    collectedReply[placeholderVendorId] = new List<StockItemDTO>();
-                }
-                List<StockItemDTO> stockList = collectedReply[placeholderVendorId];
+
+                //1: Check if item already exists in 'collectedReply'.
                 foreach (var stockItem in shoppingReply.StockItems)
                 {
                     StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Name), stockItem.Price);
-                    if (!stockList.Any(existingItem => existingItem.Product.Name == dto.Product.Name))
+                    if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
                     {
-                        stockList.Add(dto);
-                        Console.WriteLine("New item found in reply, adding to reply-collection: " + dto.Product.Name + " at cost: " + dto.Price);
+                        //2: If is - ignore the item, don't add it anywhere.
+                        Console.WriteLine("Already found product " +dto.Product.Name + " in the reply-collection. Ignoring this instance.");
+                        continue;
+                    } 
+                    //3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
+                    if (!collectedReply.ContainsKey(placeholderVendorId)){
+                        //  4: If not - Add this vendor to 'collectedReply' and add the item in their value.
+                        collectedReply[placeholderVendorId] = new List<StockItemDTO>{dto};
                     }
                     else
                     {
-                        Console.WriteLine("Already found product " + dto.Product.Name + " in reply-colletion. Ignoring this instance");
+                        //  5: If is - add the item to the Key's value.
+                        collectedReply[placeholderVendorId].Add(dto);
                     }
                 }
                 //ToDo: Remove this when section above is dynamic
