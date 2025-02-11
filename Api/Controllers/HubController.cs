@@ -1,11 +1,15 @@
 ﻿using Api.Services;
 
+using Grpc;
+
 using Core.DTOs;
 
 using Data;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HubClient;
+using Core.Entities;
 
 namespace Api.Controllers
 {
@@ -37,6 +41,7 @@ namespace Api.Controllers
         public async Task<IEnumerable<VendorVisitDTO>> GetVendorVisitsAsync()
         {
             // Fetch Vendors and include related Coordinates
+            
             var vendors = await _context.Vendors
                 .Include(v => v.Coordinates)
                 .ToListAsync();
@@ -114,12 +119,48 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> PostCart(ShoppingCartDTO cart)
         {
             // todo: early exit if bad input
+            if (cart == null || cart.Cart == null || cart.Cart.Count == 0)
+            {
+                return BadRequest("Cart was found empty or nonexistant.");
+            }
             // pass cart to GRPC API call
-            // await response from GRPC API
-            // parse response to VendorVisitDTOs (find vendor in db by vendor id)
-            // create VendorVisitDTO list to return
+                //Parse DTO cart to normal Products
+            List<Product> products = cart.Cart.Select(p => new Product(p.Name)).ToList();
+                //Create ShoppingCart with this list of Product's
+            ShoppingCart cartToSend = new ShoppingCart(products);
+            //Call the gRPC function to send the request and await response from GRPC API
+            Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend);
+            // get our relevant vendors ready and prepared
+            var vendorIds = result.Keys.ToList();
+            var relevantVendors = await _context.Vendors
+                                    .Include(v => v.Coordinates)
+                                    .Where(v => vendorIds.Contains(v.Id))
+                                    .ToListAsync();
+            // parse response from gRPC to VendorVisitDTOs (find vendor in db by vendor id)
+            List<VendorVisitDTO> returnList = relevantVendors.Select(v =>
+                new VendorVisitDTO(
+                    v.Id,
+                    new VendorDTO(
+                        v.Id,
+                        v.Name,
+                        v.CoordinatesId,
+                            new CoordinatesDTO(
+                                v.Coordinates.Id,
+                                v.Coordinates.Latitude,
+                                v.Coordinates.Longitude
+                            )
+                        ),
+                    result.ContainsKey(v.Id) ? result[v.Id] : new List<StockItemDTO>()
+                    )
+                ).ToList();
 
-            return null;
+            return Ok(returnList);
         }
+
+        //[HttpGet("AnotherTestGet")]
+        //public async void AnotherTest()
+        //{
+        //    await StoreController.Connect();
+        //}
     }
 }
