@@ -1,12 +1,11 @@
-﻿namespace Core.Entities
-{
-    public class Product
-    {
-        public string Name { get; set; }
+﻿namespace Core.Entities;
 
-        public Product(string name)
-        {
-            Name = name;
-        }
+public class Product
+{
+    public string Name { get; set; }
+
+    public Product(string name)
+    {
+        Name = name;
     }
 }

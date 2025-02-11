@@ -1,4 +1,3 @@
-﻿namespace Core.DTOs
-{
-    public record ShoppingCartDTO(List<ProductDTO> Cart);
-}
+﻿namespace Core.DTOs;
+
+public record ShoppingCartDTO(List<ProductDTO> Cart);

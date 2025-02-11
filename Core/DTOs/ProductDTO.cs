@@ -1,4 +1,3 @@
-﻿namespace Core.DTOs
-{
-    public record ProductDTO(string Name);
-}
+﻿namespace Core.DTOs;
+
+public record ProductDTO(string Name);
