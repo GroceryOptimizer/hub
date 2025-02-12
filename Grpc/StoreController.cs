@@ -1,7 +1,12 @@
-﻿using Core.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Core.DTOs;
 using Core.Entities;
+using Data;
 
 using Grpc.Net.Client;
+
+using Microsoft.EntityFrameworkCore;
 
 using StoreProto;  // The namespace we specified in the proto file
 
@@ -9,28 +14,40 @@ namespace HubClient
 {
     public class StoreController
     {
+        private static Dictionary<string, GrpcChannel> _channels = new();
 
-        public static async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
+        public static async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart, ApplicationDbContext context)
         {
             //###################### ToDo: Entire section needs to be made dynamic ######################
-            var channels = new[]
+            var ports = new[]
             {
                 "http://localhost:50051",
                 "http://localhost:50052",
-                "http://localhost:50053"
+                "http://localhost:50053" 
             };
-            int placeholderVendorId = 1;
+            int index = 0;
+            var vendorIds = await context.Vendors
+                            .Select(v => v.Id)
+                            .ToListAsync();
 
             //###########################################################################################
             //Local variable to store all replies
             Dictionary<int, List<StockItemDTO>> collectedReply = new();
 
 
-            foreach (var currentChannel in channels)
+            foreach (var currentPort in ports)
             {
                 //Craft the connection
-                using var channel = GrpcChannel.ForAddress(currentChannel);
+                //using var channel = GrpcChannel.ForAddress(currentChannel);
+                //var client = new StoreService.StoreServiceClient(channel);
+
+                if (!_channels.ContainsKey(currentPort))
+                {
+                    _channels[currentPort] = GrpcChannel.ForAddress(currentPort);
+                }
+                var channel = _channels[currentPort];
                 var client = new StoreService.StoreServiceClient(channel);
+
                 //Create the InventoryRequest from the ShoppingCart entity
                 var inventoryRequest = ConvertToInventoryRequest(shoppingCart);
                 //Send the request
@@ -50,18 +67,18 @@ namespace HubClient
                         continue;
                     } 
                     //3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
-                    if (!collectedReply.ContainsKey(placeholderVendorId)){
+                    if (!collectedReply.ContainsKey(vendorIds[index])){
                         //  4: If not - Add this vendor to 'collectedReply' and add the item in their value.
-                        collectedReply[placeholderVendorId] = new List<StockItemDTO>{dto};
+                        collectedReply[vendorIds[index]] = new List<StockItemDTO>{dto};
                     }
                     else
                     {
                         //  5: If is - add the item to the Key's value.
-                        collectedReply[placeholderVendorId].Add(dto);
+                        collectedReply[vendorIds[index]].Add(dto);
                     }
                 }
-                //ToDo: Remove this when section above is dynamic
-                placeholderVendorId++;
+                //Shift index by 1
+                index++;
             }
             //return crafted reply
             return collectedReply;

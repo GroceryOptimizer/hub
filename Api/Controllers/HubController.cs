@@ -38,7 +38,7 @@ namespace Api.Controllers
             //Create ShoppingCart with this list of Product's
             ShoppingCart cartToSend = new ShoppingCart(products);
             //Call the gRPC function to send the request and await response from GRPC API
-            Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend);
+            Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend, _context);
             // get our relevant vendors ready and prepared
             var vendorIds = result.Keys.ToList();
             var relevantVendors = await _context.Vendors
