@@ -2,53 +2,57 @@ syntax = "proto3";
 
 package grocer;
 
-option csharp_namespace = "StoreProto";
+option csharp_namespace = "Grocer.Services";
 option go_package = "github.com/GroceryOptimizer/store/proto;grocer";
 
-service StoreService{
-  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
-  rpc Products (InventoryRequest) returns (InventoryResponse);
+// Store to Hub service
+service StoreToHubService {
+    rpc HandShake (HandShakeRequest) returns (HandShakeResponse);
+    rpc UpdateInventory (UpdateInventoryRequest) returns (UpdateInventoryResponse);
 }
 
-service HubService{
-  rpc HandShake (HandShakeRequest) returns (HandShakeResponse);
+// Hub to Store service
+// Not in use for now
+service HubToStoreService {
+    rpc UpdateInventory (UpdateInventoryResponse) returns (UpdateInventoryRequest);
 }
 
-message Store{
-  string name = 1;
+message UpdateInventoryRequest {
+    string storeId = 1;
+    repeated StockItem items = 2;
 }
 
-message HandShakeRequest{
-  Store store = 1;
-  string grpcAddress = 2;
+message UpdateInventoryResponse {
+    //Timestamp timestamp = 1;
 }
 
-message HandShakeResponse{
-  string id = 1;
+message StockItem {
+    string productId = 1;
+    int32 quantity = 2;
+    double price = 3;
+}  
+
+message HandShakeRequest {
+    Store store = 1;
 }
 
-message SendMessageRequest{
-  string message = 1;
+message HandShakeResponse {
+    string storeId = 1;
+    //Timestamp timestamp = 2;
 }
 
-message SendMessageResponse{
-  string reply = 1;
+message Store {
+    string name = 1;
+    Coordinates location = 2;
+    string grpcAddress = 3;
 }
 
-message Product{
-  string name = 1;
+message Coordinates {
+    double latitude = 1;
+    double longitude = 2;
 }
 
-message InventoryRequest{
-  repeated Product shoppingCart = 1;
+message Timestamp {
+    int64 seconds = 1;
+    int32 nanos = 2;
 }
-
-message StockItem{
-  string name = 1;
-  int32 price = 2;
-}
-
-message InventoryResponse{
-  repeated StockItem stockItems = 1;
-}
-

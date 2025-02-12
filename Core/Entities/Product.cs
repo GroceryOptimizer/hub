@@ -1,11 +1,20 @@
-﻿namespace Core.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Core.Entities;
+
+#nullable disable
 
 public class Product
 {
+    [Key]
+    public Guid Id { get; set; }
+
+    [Required]
     public string Name { get; set; }
 
-    public Product(string name)
-    {
-        Name = name;
-    }
+    [Required]
+    public string SKU { get; set; }
+
+    [Required]
+    public ProductPackage Package { get; set; } = new();
 }

@@ -1,9 +1,9 @@
+using Grocer.Services;
 using Grpc.Core;
-using StoreProto;
 
 namespace Api.Grpc;
 
-public class HubServer : HubService.HubServiceBase
+public class HubServer : StoreToHubService.StoreToHubServiceBase
 {
     private readonly IStoreRepository _storeRepo;
 
@@ -19,7 +19,7 @@ public class HubServer : HubService.HubServiceBase
     {
         var store = ParseStore(request);
         await _storeRepo.Add(store);
-        return new() { Id = store.Id.ToString() };
+        return new() { StoreId = store.Id.ToString() };
     }
 
     private static Core.Entities.Store ParseStore(HandShakeRequest req)
@@ -29,7 +29,7 @@ public class HubServer : HubService.HubServiceBase
             Id = Guid.NewGuid(),
             Name = req.Store.Name,
             Location = null!,
-            GrpcAdress = req.GrpcAddress,
+            GrpcAdress = req.Store.GrpcAddress,
         };
 
         return newStore;

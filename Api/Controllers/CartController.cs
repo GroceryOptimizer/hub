@@ -16,7 +16,9 @@ public class CartController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CartRes>> FindStoresByCart([FromBody] CartReq cart)
     {
-        var result = await _cartService.GetStoreByCart(cart.Items);
-        return Ok(result);
+        //var result = await _cartService.GetStoreByCart(cart.Items);
+        //return Ok(result);
+
+        return Ok();
     }
 }
