@@ -21,37 +21,27 @@ namespace StoreApi
             _context = context;
         }
 
-        // todo: maybe make it not static, and use ApplicationDbContext to get context here instead
         public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
-            //###################### ToDo: Entire section needs to be made dynamic ######################
-            var ports = new[]
-            {
-                "http://localhost:50051",
-                "http://localhost:50052",
-                "http://localhost:50053"
-            };
-            int index = 0;
-            var vendorIds = await _context.Vendors
-                            .Select(v => v.Id)
-                            .ToListAsync();
+            var vendors = await _context.Vendors.ToListAsync();
 
-            //###########################################################################################
             //Local variable to store all replies
             Dictionary<int, List<StockItemDTO>> collectedReply = new();
 
-
-            foreach (var currentPort in ports)
+            foreach (var vendor in vendors)
             {
-                //Craft the connection
-                //using var channel = GrpcChannel.ForAddress(currentChannel);
-                //var client = new StoreService.StoreServiceClient(channel);
+                //Parse the vendor address to extract the port
+                var uri = new Uri("http://" + vendor.GrpcAddress);
+                var port = uri.Port;
+                var address = $"http://localhost:{port}";
 
-                if (!_channels.ContainsKey(currentPort))
+                //Craft the connection
+                if (!_channels.ContainsKey(address))
                 {
-                    _channels[currentPort] = GrpcChannel.ForAddress(currentPort);
+                    _channels[address] = GrpcChannel.ForAddress(address);
                 }
-                var channel = _channels[currentPort];
+
+                var channel = _channels[address];
                 var client = new StoreService.StoreServiceClient(channel);
 
                 //Create the InventoryRequest from the ShoppingCart entity
@@ -73,19 +63,17 @@ namespace StoreApi
                         continue;
                     }
                     //3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
-                    if (!collectedReply.ContainsKey(vendorIds[index]))
+                    if (!collectedReply.ContainsKey(vendor.Id))
                     {
                         //  4: If not - Add this vendor to 'collectedReply' and add the item in their value.
-                        collectedReply[vendorIds[index]] = new List<StockItemDTO> { dto };
+                        collectedReply[vendor.Id] = new List<StockItemDTO> { dto };
                     }
                     else
                     {
                         //  5: If is - add the item to the Key's value.
-                        collectedReply[vendorIds[index]].Add(dto);
+                        collectedReply[vendor.Id].Add(dto);
                     }
                 }
-                //Shift index by 1
-                index++;
             }
             //return crafted reply
             return collectedReply;
