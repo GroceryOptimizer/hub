@@ -19,6 +19,10 @@ public class HubServer : HubService.HubServiceBase
         ServerCallContext context
     )
     {
+        Console.WriteLine("Handshake request in:");
+        Console.WriteLine("Store name: " + request.Store.Name);
+        Console.WriteLine("Store address: " + request.Store.GrpcAddress);
+        Console.WriteLine("Store location: " + request.Store.Location);
         var vendor = MapToVendor(request.Store);
 
         _context.Vendors.Add(vendor);

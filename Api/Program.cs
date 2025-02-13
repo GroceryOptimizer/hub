@@ -38,13 +38,6 @@ public class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
         // Ensure database is deleted and migrated before starting the application
         using (var scope = app.Services.CreateScope())
         {
@@ -53,9 +46,22 @@ public class Program
             await context.Database.MigrateAsync();
         }
 
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        // Configure the HTTP request pipeline.
+        //if (app.Environment.IsDevelopment())
+        //{
+        //    app.UseSwagger();
+        //    app.UseSwaggerUI(options =>
+        //    {
+        //        options.SwaggerEndpoint("/swagger/v1/swagger.json", "GroceryOptimizerAPI");
+        //        options.RoutePrefix = "swagger";
+        //    });
+        //}
+
         // Listen on GRPC handshake
         app.MapGrpcService<HubServer>();
-
         app.UseAuthorization();
         app.MapControllers();
 

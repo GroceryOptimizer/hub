@@ -1,8 +1,11 @@
-﻿using Core.DTOs;
+﻿using System.Threading.Channels;
+
+using Core.DTOs;
 using Core.Entities;
 
 using Data;
 
+using Grpc.Core;
 using Grpc.Net.Client;
 
 using Microsoft.EntityFrameworkCore;
@@ -21,43 +24,55 @@ namespace StoreApi
             _context = context;
         }
 
-        // todo: maybe make it not static, and use ApplicationDbContext to get context here instead
         public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
             //###################### ToDo: Entire section needs to be made dynamic ######################
-            var ports = new[]
-            {
-                "http://localhost:50051",
-                "http://localhost:50052",
-                "http://localhost:50053"
-            };
-            int index = 0;
+            var storeNames = await _context.Vendors
+                            .Select(v => v.Name)
+                            .ToListAsync();
             var vendorIds = await _context.Vendors
                             .Select(v => v.Id)
                             .ToListAsync();
-
+            int index = 0;
             //###########################################################################################
             //Local variable to store all replies
             Dictionary<int, List<StockItemDTO>> collectedReply = new();
 
+            //var templist = new[]
+            //{
+            //    "http://store_willys:50051",
+            //    "http://store_coop:50051",
+            //    "http://store_ica:50051"
+            //};
 
-            foreach (var currentPort in ports)
-            {
-                //Craft the connection
-                //using var channel = GrpcChannel.ForAddress(currentChannel);
-                //var client = new StoreService.StoreServiceClient(channel);
+            //foreach (var currentChannel in templist)
+            //{
+            //    //Craft the connection
+            //    using var channel = GrpcChannel.ForAddress(currentChannel);
+            //    var client = new StoreService.StoreServiceClient(channel);
 
-                if (!_channels.ContainsKey(currentPort))
+                foreach (var store in storeNames)
                 {
-                    _channels[currentPort] = GrpcChannel.ForAddress(currentPort);
-                }
-                var channel = _channels[currentPort];
-                var client = new StoreService.StoreServiceClient(channel);
+                    string containerName = "store_" + store.ToLower();
+                    string grpcAddress = $"http://{containerName}:50051";
+                Console.WriteLine("-------------------------------------");
+                Console.WriteLine("Crafted gRPC address to: " + grpcAddress);
+                Console.WriteLine("-------------------------------------");
+                //Craft the connection
+                if (!_channels.ContainsKey(containerName))
+                    {
+                        _channels[containerName] = GrpcChannel.ForAddress("http://" + grpcAddress, new GrpcChannelOptions
+                        {
+                            Credentials = ChannelCredentials.Insecure
+                        });
+                    }
+                    var channel = _channels[containerName];
+                    var client = new StoreService.StoreServiceClient(channel);
 
-                //Create the InventoryRequest from the ShoppingCart entity
-                var inventoryRequest = ConvertToInventoryRequest(shoppingCart);
+                    //Create the InventoryRequest from the ShoppingCart entity
+                    var inventoryRequest = ConvertToInventoryRequest(shoppingCart);
                 //Send the request
-                Console.WriteLine("Sending gRPC request now.");
+                //Console.WriteLine("Sending gRPC request to container " + containerName +" now. Using address: " +grpcAddress);
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
                 //Parse the request to workable DTOs and check for duplicates
 

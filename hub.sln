@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{CC83FE25-B163-4CC8-AA7D-C375448C05BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApi", "StoreApi\StoreApi.csproj", "{79F4C199-938B-4539-AC18-8CA91D0EB102}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreApi", "StoreApi\StoreApi.csproj", "{79F4C199-938B-4539-AC18-8CA91D0EB102}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
