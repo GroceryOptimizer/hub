@@ -27,7 +27,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> PostCart(ShoppingCartDTO cart)
         {
-            // todo: early exit if bad input
+            // Early exit if bad input
             if (cart == null || cart.Cart == null || cart.Cart.Count == 0)
             {
                 return BadRequest("Cart was found empty or nonexistant.");
