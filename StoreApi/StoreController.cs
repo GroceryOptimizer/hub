@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-using Core.DTOs;
+﻿using Core.DTOs;
 using Core.Entities;
+
 using Data;
 
 using Grpc.Net.Client;
@@ -10,12 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 using StoreProto;  // The namespace we specified in the proto file
 
-namespace HubClient
+namespace HubClient // todo: fix namespace
 {
-    public class StoreController
+    public class StoreController // todo: figure out new name, maybe StoreClient
     {
         private static Dictionary<string, GrpcChannel> _channels = new();
 
+        // todo: maybe make it not static, and use ApplicationDbContext to get context here instead
         public static async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart, ApplicationDbContext context)
         {
             //###################### ToDo: Entire section needs to be made dynamic ######################
@@ -23,7 +23,7 @@ namespace HubClient
             {
                 "http://localhost:50051",
                 "http://localhost:50052",
-                "http://localhost:50053" 
+                "http://localhost:50053"
             };
             int index = 0;
             var vendorIds = await context.Vendors
@@ -63,13 +63,14 @@ namespace HubClient
                     if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
                     {
                         //2: If is - ignore the item, don't add it anywhere.
-                        Console.WriteLine("Already found product " +dto.Product.Name + " in the reply-collection. Ignoring this instance.");
+                        Console.WriteLine("Already found product " + dto.Product.Name + " in the reply-collection. Ignoring this instance.");
                         continue;
-                    } 
+                    }
                     //3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
-                    if (!collectedReply.ContainsKey(vendorIds[index])){
+                    if (!collectedReply.ContainsKey(vendorIds[index]))
+                    {
                         //  4: If not - Add this vendor to 'collectedReply' and add the item in their value.
-                        collectedReply[vendorIds[index]] = new List<StockItemDTO>{dto};
+                        collectedReply[vendorIds[index]] = new List<StockItemDTO> { dto };
                     }
                     else
                     {
