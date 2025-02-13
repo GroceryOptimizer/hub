@@ -61,7 +61,7 @@ namespace StoreApi
                 //Craft the connection
                 if (!_channels.ContainsKey(containerName))
                     {
-                        _channels[containerName] = GrpcChannel.ForAddress("http://" + grpcAddress, new GrpcChannelOptions
+                        _channels[containerName] = GrpcChannel.ForAddress(grpcAddress, new GrpcChannelOptions
                         {
                             Credentials = ChannelCredentials.Insecure
                         });
