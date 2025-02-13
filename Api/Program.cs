@@ -1,7 +1,10 @@
-using System.Threading.Tasks;
 using Core;
+
 using Data;
+
 using Microsoft.EntityFrameworkCore;
+
+using StoreApi;
 using StoreApi.Services;
 
 namespace Api;
@@ -23,6 +26,9 @@ public class Program
 
         // AutoMapper
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+        // Register StoreClient Service
+        builder.Services.AddScoped<StoreClient>();
 
         // Controllers
         builder.Services.AddControllers();

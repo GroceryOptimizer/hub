@@ -3,10 +3,10 @@ using Core.Entities;
 
 using Data;
 
-using HubClient;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+using StoreApi;
 
 namespace Api.Controllers
 {
@@ -15,10 +15,12 @@ namespace Api.Controllers
     public class CartController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly StoreClient _storeClient;
 
-        public CartController(ApplicationDbContext context)
+        public CartController(ApplicationDbContext context, StoreClient storeClient)
         {
             this._context = context;
+            this._storeClient = storeClient;
         }
 
         // POST:
@@ -38,7 +40,7 @@ namespace Api.Controllers
             ShoppingCart cartToSend = new ShoppingCart(products); // Create ShoppingCart with this list of Product's
 
             // Call the gRPC function to send the request and await response from GRPC API
-            Dictionary<int, List<StockItemDTO>> result = await StoreController.SendGrpcCall(cartToSend, _context); // todo: should context be passed like this?
+            Dictionary<int, List<StockItemDTO>> result = await _storeClient.SendGrpcCall(cartToSend);
 
             // Make sure we get a response
             if (result == null || !result.Any())

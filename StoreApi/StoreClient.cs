@@ -9,14 +9,20 @@ using Microsoft.EntityFrameworkCore;
 
 using StoreProto;  // The namespace we specified in the proto file
 
-namespace HubClient // todo: fix namespace
+namespace StoreApi
 {
-    public class StoreController // todo: figure out new name, maybe StoreClient
+    public class StoreClient
     {
-        private static Dictionary<string, GrpcChannel> _channels = new();
+        private Dictionary<string, GrpcChannel> _channels = new();
+        private readonly ApplicationDbContext _context;
+
+        public StoreClient(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         // todo: maybe make it not static, and use ApplicationDbContext to get context here instead
-        public static async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart, ApplicationDbContext context)
+        public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
             //###################### ToDo: Entire section needs to be made dynamic ######################
             var ports = new[]
@@ -26,7 +32,7 @@ namespace HubClient // todo: fix namespace
                 "http://localhost:50053"
             };
             int index = 0;
-            var vendorIds = await context.Vendors
+            var vendorIds = await _context.Vendors
                             .Select(v => v.Id)
                             .ToListAsync();
 
@@ -85,7 +91,7 @@ namespace HubClient // todo: fix namespace
             return collectedReply;
         }
 
-        private static InventoryRequest ConvertToInventoryRequest(ShoppingCart cart)
+        private InventoryRequest ConvertToInventoryRequest(ShoppingCart cart)
         {
             return new InventoryRequest
             {
