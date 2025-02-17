@@ -1,15 +1,10 @@
-﻿namespace Core.Entities
-{
-    public class Coordinates
-    {
-        public int Id { get; set; }
-        public float Longitude { get; set; }
-        public float Latitude { get; set; }
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-        public Coordinates(float longitude, float latitude)
-        {
-            Longitude = longitude;
-            Latitude = latitude;
-        }
-    }
+namespace Core.Entities;
+
+[ComplexType]
+public class Coordinates
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
 }

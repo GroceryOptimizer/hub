@@ -1,0 +1,31 @@
+* text=auto eol=lf
+
+*.cs diff=csharp
+*.json diff=json
+
+*.sln eol=crlf
+*.csproj eol=crlf
+*.vbproj eol=crlf
+*.fsproj eol=crlf
+*.user eol=crlf
+*.suo eol=crlf
+*.bat eol=crlf
+*.cmd eol=crlf
+*.ps1 eol=crlf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.dll binary
+*.exe binary
+*.pdb binary
+*.so binary
+*.dylib binary
+*.a binary
+*.lib binary
+*.obj binary
+*.bin binary

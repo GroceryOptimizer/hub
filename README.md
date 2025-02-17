@@ -56,89 +56,69 @@ For those who prefer the terminal, follow these steps:
    ```sh
    dotnet run --project Api --launch-profile "http"
    ```  
-<details>
-   <summary>Click to expand API Reference 🔴 **Work in Progress**  </summary>
-   
-## API Reference  🔴 **Work in Progress**  
-⚠️ **Work in Progress:** These API endpoints are not finalized.
+  
+## API Reference
    
 ### REST API Endpoints (Client Communication)  
-#### `GET /api/products`  
-**Description:** Fetches a list of available products.  
-**Request Parameters:** None  
-**Response:**  
-```json
-[
-  {
-    "id": 1,
-    "name": "Apples",
-    "price": 2.99,
-    "stock": 150
-  },
-  {
-    "id": 2,
-    "name": "Bananas",
-    "price": 1.99,
-    "stock": 200
-  }
-]
-```  
-
-#### `POST /api/order`  
-**Description:** Places an order.  
+#### `POST /api/hub`  
+**Description:** Processes a shopping cart and returns a collection of vendor visits.  
 **Request Body:**  
 ```json
 {
-  "customerId": 123,
-  "items": [
-    { "productId": 1, "quantity": 5 },
-    { "productId": 2, "quantity": 3 }
+  "cart": [
+    {
+      "name": "string"
+    }
   ]
 }
 ```  
 **Response:**  
 ```json
-{
-  "orderId": 456,
-  "status": "Confirmed"
-}
+[
+  {
+    "vendorId": 1,
+    "vendor": {
+      "id": 1,
+      "name": "Vendor Name",
+      "coordinatesId": 101,
+      "coordinates": {
+        "id": 101,
+        "longitude": 13.405,
+        "latitude": 52.52
+      }
+    },
+    "stockItems": [
+      {
+        "product": {
+          "name": "Apple"
+        },
+        "price": 299
+      }
+    ]
+  }
+]
 ```  
+**Error Responses:**  
+- `400 Bad Request` if the cart is empty or missing.  
 
 ### gRPC Endpoints (Store Communication)  
 
-#### `CheckStock`  
-**Description:** Checks stock availability for a product.  
+#### `Products (InventoryRequest) → InventoryResponse`  
+**Description:** Fetches product availability based on the shopping cart.  
+
 **Request:**  
 ```proto
-message StockRequest {
-  int32 productId = 1;
-}
-```  
-**Response:**  
-```proto
-message StockResponse {
-  int32 productId = 1;
-  int32 availableQuantity = 2;
+message InventoryRequest {
+  repeated Product shoppingCart = 1;
 }
 ```  
 
-#### `ProcessOrder`  
-**Description:** Processes an order request.  
-**Request:**  
-```proto
-message OrderRequest {
-  int32 orderId = 1;
-}
-```  
 **Response:**  
 ```proto
-message OrderResponse {
-  int32 orderId = 1;
-  string status = 2;
+message InventoryResponse {
+  repeated StockItem stockItems = 1;
 }
 ```  
-
-   </details>    
        
 ## Usage  
 - Start within **30 seconds** after launching the Docker containers.  
