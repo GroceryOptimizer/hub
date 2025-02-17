@@ -1,9 +1,6 @@
 using Core;
-
 using Data;
-
 using Microsoft.EntityFrameworkCore;
-
 using StoreApi;
 using StoreApi.Services;
 
@@ -19,6 +16,26 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
         );
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                "AllowAllLocalhost",
+                policy =>
+                {
+                    policy
+                        .WithOrigins(
+                            "http://localhost:3000",
+                            "http://localhost:5173",
+                            "http://localhost:8080",
+                            "http://localhost:5000",
+                            "http://localhost:7049"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
+            );
+        });
 
         // Swagger/OpenAPI
         builder.Services.AddEndpointsApiExplorer();
@@ -51,6 +68,8 @@ public class Program
         app.UseSwaggerUI();
 
         // Listen on GRPC handshake
+        app.UseCors("AllowAllLocalhost");
+
         app.MapGrpcService<HubServer>();
         app.UseAuthorization();
         app.MapControllers();
