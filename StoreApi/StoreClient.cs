@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-
-using Core.DTOs;
+﻿using Core.DTOs;
 using Core.Entities;
 
 using Data;
@@ -26,7 +24,6 @@ namespace StoreApi
 
         public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
-            //###################### ToDo: Entire section needs to be made dynamic ######################
             var storeNames = await _context.Vendors
                             .Select(v => v.Name)
                             .ToListAsync();
@@ -34,76 +31,58 @@ namespace StoreApi
                             .Select(v => v.Id)
                             .ToListAsync();
             int index = 0;
-            //###########################################################################################
-            //Local variable to store all replies
+            // Local variable to store all replies
             Dictionary<int, List<StockItemDTO>> collectedReply = new();
 
-            //var templist = new[]
-            //{
-            //    "http://store_willys:50051",
-            //    "http://store_coop:50051",
-            //    "http://store_ica:50051"
-            //};
+            foreach (var store in storeNames)
+            {
+                string containerName = "store_" + store.ToLower();
+                string grpcAddress = $"http://{containerName}:50051";
 
-            //foreach (var currentChannel in templist)
-            //{
-            //    //Craft the connection
-            //    using var channel = GrpcChannel.ForAddress(currentChannel);
-            //    var client = new StoreService.StoreServiceClient(channel);
-
-                foreach (var store in storeNames)
-                {
-                    string containerName = "store_" + store.ToLower();
-                    string grpcAddress = $"http://{containerName}:50051";
-                Console.WriteLine("-------------------------------------");
-                Console.WriteLine("Crafted gRPC address to: " + grpcAddress);
-                Console.WriteLine("-------------------------------------");
-                //Craft the connection
+                // Craft the connection
                 if (!_channels.ContainsKey(containerName))
+                {
+                    _channels[containerName] = GrpcChannel.ForAddress(grpcAddress, new GrpcChannelOptions
                     {
-                        _channels[containerName] = GrpcChannel.ForAddress(grpcAddress, new GrpcChannelOptions
-                        {
-                            Credentials = ChannelCredentials.Insecure
-                        });
-                    }
-                    var channel = _channels[containerName];
-                    var client = new StoreService.StoreServiceClient(channel);
+                        Credentials = ChannelCredentials.Insecure
+                    });
+                }
+                var channel = _channels[containerName];
+                var client = new StoreService.StoreServiceClient(channel);
 
-                    //Create the InventoryRequest from the ShoppingCart entity
-                    var inventoryRequest = ConvertToInventoryRequest(shoppingCart);
-                //Send the request
-                //Console.WriteLine("Sending gRPC request to container " + containerName +" now. Using address: " +grpcAddress);
+                // Create the InventoryRequest from the ShoppingCart entity
+                var inventoryRequest = ConvertToInventoryRequest(shoppingCart);
+
+                // Send the request
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
-                //Parse the request to workable DTOs and check for duplicates
 
-                //0: Loop through each StockItem in the reply from this Store
+                // Parse the request to workable DTOs and check for duplicates
+                // 0: Loop through each StockItem in the reply from this Store
                 foreach (var stockItem in shoppingReply.StockItems)
                 {
                     StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Name), stockItem.Price);
-                    //1: Check if item already exists in 'collectedReply'.
+                    // 1: Check if item already exists in 'collectedReply'.
                     if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
                     {
-                        //2: If is - ignore the item, don't add it anywhere.
+                        // 2: If is - ignore the item, don't add it anywhere.
                         Console.WriteLine("Already found product " + dto.Product.Name + " in the reply-collection. Ignoring this instance.");
                         continue;
                     }
-                    //3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
+                    // 3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
                     if (!collectedReply.ContainsKey(vendorIds[index]))
                     {
-                        //  4: If not - Add this vendor to 'collectedReply' and add the item in their value.
+                        // 4: If not - Add this vendor to 'collectedReply' and add the item in their value.
                         collectedReply[vendorIds[index]] = new List<StockItemDTO> { dto };
                     }
                     else
                     {
-                        //  5: If is - add the item to the Key's value.
+                        // 5: If is - add the item to the Key's value.
                         collectedReply[vendorIds[index]].Add(dto);
                     }
                 }
-                //Shift index by 1
-                index++;
+                index++; // Shift index by 1
             }
-            //return crafted reply
-            return collectedReply;
+            return collectedReply; // return crafted reply
         }
 
         private InventoryRequest ConvertToInventoryRequest(ShoppingCart cart)
@@ -115,4 +94,3 @@ namespace StoreApi
         }
     }
 }
-

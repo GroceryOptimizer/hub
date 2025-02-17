@@ -46,19 +46,9 @@ public class Program
             await context.Database.MigrateAsync();
         }
 
+        // Always use swagger
         app.UseSwagger();
         app.UseSwaggerUI();
-
-        // Configure the HTTP request pipeline.
-        //if (app.Environment.IsDevelopment())
-        //{
-        //    app.UseSwagger();
-        //    app.UseSwaggerUI(options =>
-        //    {
-        //        options.SwaggerEndpoint("/swagger/v1/swagger.json", "GroceryOptimizerAPI");
-        //        options.RoutePrefix = "swagger";
-        //    });
-        //}
 
         // Listen on GRPC handshake
         app.MapGrpcService<HubServer>();
