@@ -1,3 +1,5 @@
+using Core.Entities;
+
 using Data;
 
 using Grpc.Core;
@@ -30,6 +32,37 @@ public class HubServer : HubService.HubServiceBase
         return new HandShakeResponse { Id = store.Id.ToString() };
     }
 
+    public override async Task<UpdateInventoryResponse> UpdateInventory(
+        UpdateInventoryRequest request,
+        ServerCallContext context
+    )
+    {
+        var store = await _context.Stores.FindAsync(Guid.Parse(request.StoreId)) ??
+            throw new RpcException(new Status(StatusCode.NotFound, "Store not found"));
+
+        var productNames = _context.Products.Select(p => p.Name);
+        var stockItemNames = request.StockItems.Select(x => x.Product.Name);
+        //var products = await _context.Product.Where(p => stockItemNames.Contains(p.Name)).ToListAsync();
+        var query = _context.Products.Where(p => stockItemNames.Contains(p.Name));
+        var products = await query.ToListAsync();
+
+        var storeInventories = new List<StoreInventory>();
+
+        foreach (var stockItem in request.StockItems)
+        {
+            //var product = Products.First(p => p.Name == stockItem.Product.Name);
+            //storeInventories.Add(MapToStoreInventory(stockItem, product, store));
+        }
+
+
+        _context.Inventories.AddRange(storeInventories);
+        var nrOfMutations = await _context.SaveChangesAsync();
+
+        Console.WriteLine($"Received inventory list from Go Store service: {nrOfMutations} items");
+
+        return new UpdateInventoryResponse { Message = "received inventory list" };
+    }
+
     private static Core.Entities.Store MapToStore(StoreProto.Store store) =>
         new()
         {
@@ -41,17 +74,12 @@ public class HubServer : HubService.HubServiceBase
                 Longitude = store.Location.Longitude,
             },
         };
-    private static Core.Entities.StockList MapToStockList(StoreProto.UpdateInventoryRequest stockItems)
-    {
-        Core.Entities.StockList stockList = new Core.Entities.StockList();
 
-        foreach (var item in stockItems.StockItems)
-        {
-            Core.Entities.Product newProduct = new Core.Entities.Product(item.Product.Name);
-            Core.Entities.StockItem newStockItem = new Core.Entities.StockItem(newProduct, item.Quantity, item.Price);
-            stockList.StockItems.Add(newStockItem);
-        }
-
-        return stockList;
-    }
+    private static StoreInventory MapToStoreInventory(StoreProto.StockItem stockItem, Core.Entities.Product product, Core.Entities.Store store)
+        => new() {
+            StoreId = store.Id,
+            ProductId = product.Id,
+            Price = stockItem.Price,
+            Quantity = stockItem.Quantity,
+        };
 }

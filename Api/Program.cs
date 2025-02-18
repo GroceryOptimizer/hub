@@ -45,7 +45,7 @@ public class Program
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
         // Register StoreClient Service
-        builder.Services.AddScoped<StoreClient>();
+        //builder.Services.AddScoped<StoreClient>();
 
         // Controllers
         builder.Services.AddControllers();

@@ -9,5 +9,6 @@ public class ApplicationDbContext : DbContext
         : base(options) { }
 
     public DbSet<Store> Stores { get; set; }
-    public DbSet<StockList> StockList { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<StoreInventory> Inventories { get; set; }
 }
