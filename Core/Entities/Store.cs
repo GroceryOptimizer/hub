@@ -4,7 +4,7 @@
 
 namespace Core.Entities;
 
-public class Vendor
+public class Store
 {
     [Key]
     public int Id { get; set; }
