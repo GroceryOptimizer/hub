@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250212110719_Init")]
+    [Migration("20250218090855_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
-            modelBuilder.Entity("Core.Entities.Vendor", b =>
+            modelBuilder.Entity("Core.Entities.Store", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,7 +32,7 @@ namespace Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Location", "Core.Entities.Vendor.Location#Coordinates", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("Location", "Core.Entities.Store.Location#Coordinates", b1 =>
                         {
                             b1.IsRequired();
 
@@ -45,7 +45,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vendors");
+                    b.ToTable("Stores");
                 });
 #pragma warning restore 612, 618
         }

@@ -25,9 +25,9 @@ namespace Api.Controllers
 
         // POST:
         // input: Shopping Cart DTO
-        // return: Collection of Vendor Visit DTOs
+        // return: Collection of Store Visit DTOs
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<VendorVisitDTO>>> PostCart(ShoppingCartDTO cart)
+        public async Task<ActionResult<IEnumerable<StoreVisitDTO>>> PostCart(ShoppingCartDTO cart)
         {
             // Early exit if bad input
             if (cart == null || cart.Cart == null || cart.Cart.Count == 0)
@@ -48,17 +48,17 @@ namespace Api.Controllers
                 return BadRequest("Failed to retrieve stock data from the gRPC service.");
             }
 
-            // Get our relevant vendors ready and prepared
-            var vendorIds = result.Keys.ToList();
-            var relevantVendors = await _context.Vendors
-                .Where(v => vendorIds.Contains(v.Id))
+            // Get our relevant Stores ready and prepared
+            var storeIds = result.Keys.ToList();
+            var relevantStores = await _context.Stores
+                .Where(v => storeIds.Contains(v.Id))
                 .ToListAsync();
 
-            // parse response from gRPC to VendorVisitDTOs (find vendor in db by vendor id)
-            List<VendorVisitDTO> returnList = relevantVendors
-                .Select(v => new VendorVisitDTO(
+            // parse response from gRPC to StoreVisitDTOs (find Store in db by Store id)
+            List<StoreVisitDTO> returnList = relevantStores
+                .Select(v => new StoreVisitDTO(
                     v.Id,
-                    new VendorDTO(
+                    new StoreDTO(
                         v.Id,
                         v.Name,
                         new CoordinatesDTO(v.Location.Latitude, v.Location.Longitude)

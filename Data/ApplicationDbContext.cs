@@ -8,5 +8,5 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
-    public DbSet<Vendor> Vendors { get; set; }
+    public DbSet<Store> Stores { get; set; }
 }
