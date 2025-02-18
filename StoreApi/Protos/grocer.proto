@@ -50,7 +50,7 @@ message InventoryRequest {
 }
 
 message StockItem {
-    string name = 1;
+    Product product = 1;
     int32 price = 2;
     int32 quantity = 3;
 }
@@ -60,7 +60,7 @@ message InventoryResponse {
 }
 
 message UpdateInventoryRequest{
-  repeated StockItem inventory = 1;
+  repeated StockItem stockItems = 1;
 }
 
 message UpdateInventoryResponse{

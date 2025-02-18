@@ -60,7 +60,7 @@ namespace StoreApi
                 // 0: Loop through each StockItem in the reply from this Store
                 foreach (var stockItem in shoppingReply.StockItems)
                 {
-                    StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Name), stockItem.Price);
+                    StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Product.Name), stockItem.Price);
                     // 1: Check if item already exists in 'collectedReply'.
                     if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
                     {
