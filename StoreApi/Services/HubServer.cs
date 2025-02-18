@@ -45,4 +45,13 @@ public class HubServer : HubService.HubServiceBase
                 Longitude = store.Location.Longitude,
             },
         };
+    private static Core.Entities.StockList MapToStockList(StoreProto.UpdateInventoryRequest inventory) =>
+        new()
+        {
+            StockItems = inventory.StockItems.Select(i => new Core.Entities.StockItem
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity,
+            }).ToList(),
+        };
 }
