@@ -20,10 +20,6 @@ public class HubServer : HubService.HubServiceBase
         ServerCallContext context
     )
     {
-        Console.WriteLine("Handshake request in:");
-        Console.WriteLine("Store name: " + request.Store.Name);
-        Console.WriteLine("Store address: " + request.Store.GrpcAddress);
-        Console.WriteLine("Store location: " + request.Store.Location);
         var store = MapToStore(request.Store);
 
         _context.Stores.Add(store);
@@ -45,13 +41,17 @@ public class HubServer : HubService.HubServiceBase
                 Longitude = store.Location.Longitude,
             },
         };
-    private static Core.Entities.StockList MapToStockList(StoreProto.UpdateInventoryRequest inventory) =>
-        new()
+    private static Core.Entities.StockList MapToStockList(StoreProto.UpdateInventoryRequest stockItems)
+    {
+        Core.Entities.StockList stockList = new Core.Entities.StockList();
+
+        foreach (var item in stockItems.StockItems)
         {
-            StockItems = inventory.StockItems.Select(i => new Core.Entities.StockItem
-            {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-            }).ToList(),
-        };
+            Core.Entities.Product newProduct = new Core.Entities.Product(item.Product.Name);
+            Core.Entities.StockItem newStockItem = new Core.Entities.StockItem(newProduct, item.Quantity, item.Price);
+            stockList.StockItems.Add(newStockItem);
+        }
+
+        return stockList;
+    }
 }
