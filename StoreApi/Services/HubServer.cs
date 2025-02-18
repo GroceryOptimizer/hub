@@ -1,6 +1,7 @@
-using Core.Entities;
 using Data;
+
 using Grpc.Core;
+
 using StoreProto;
 
 namespace StoreApi.Services;
@@ -23,17 +24,17 @@ public class HubServer : HubService.HubServiceBase
         Console.WriteLine("Store name: " + request.Store.Name);
         Console.WriteLine("Store address: " + request.Store.GrpcAddress);
         Console.WriteLine("Store location: " + request.Store.Location);
-        var vendor = MapToVendor(request.Store);
+        var store = MapToStore(request.Store);
 
-        _context.Vendors.Add(vendor);
+        _context.Stores.Add(store);
         await _context.SaveChangesAsync();
 
-        Console.WriteLine("Received handshake from Go Vendor service: " + request.Store);
+        Console.WriteLine("Received handshake from Go Store service: " + request.Store);
 
-        return new HandShakeResponse { Id = vendor.Id.ToString() };
+        return new HandShakeResponse { Id = store.Id.ToString() };
     }
 
-    private static Vendor MapToVendor(Store store) =>
+    private static Core.Entities.Store MapToStore(StoreProto.Store store) =>
         new()
         {
             Name = store.Name,
