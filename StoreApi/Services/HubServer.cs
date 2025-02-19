@@ -6,6 +6,8 @@ using Grpc.Core;
 
 using StoreProto;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace StoreApi.Services;
 
 public class HubServer : HubService.HubServiceBase
@@ -37,21 +39,27 @@ public class HubServer : HubService.HubServiceBase
         ServerCallContext context
     )
     {
+        Console.WriteLine("Received inventory list from Go Store service: {0}, {1} ", request.StockItems, request.StoreId);
         var store = await _context.Stores.FindAsync(Guid.Parse(request.StoreId)) ??
             throw new RpcException(new Status(StatusCode.NotFound, "Store not found"));
 
+        // Get all product names from the database
         var productNames = _context.Products.Select(p => p.Name);
+        // Get all product names from the request
         var stockItemNames = request.StockItems.Select(x => x.Product.Name);
-        //var products = await _context.Product.Where(p => stockItemNames.Contains(p.Name)).ToListAsync();
-        var query = _context.Products.Where(p => stockItemNames.Contains(p.Name));
-        var products = await query.ToListAsync();
+        // Get all products that are not in the request
+        var products = await _context.Products.Where(p => !stockItemNames.Contains(p.Name)).ToListAsync();
 
         var storeInventories = new List<StoreInventory>();
 
+        // Map the stock items to store inventories
         foreach (var stockItem in request.StockItems)
         {
-            //var product = Products.First(p => p.Name == stockItem.Product.Name);
-            //storeInventories.Add(MapToStoreInventory(stockItem, product, store));
+
+            var product = products.First(p => p.Name == stockItem.Product.Name);
+            var map = MapToStoreInventory(stockItem, product, store);
+
+            storeInventories.Add(map);
         }
 
 
