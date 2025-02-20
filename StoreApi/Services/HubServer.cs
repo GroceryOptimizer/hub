@@ -30,6 +30,38 @@ public class HubServer : HubService.HubServiceBase
         return new HandShakeResponse { Id = store.Id.ToString() };
     }
 
+    public override async Task<UpdateInventoryResponse> UpdateInventory(
+        UpdateInventoryRequest request,
+        ServerCallContext context
+    )
+    {
+        Console.WriteLine("Received inventory list from Go Store service: {0}, {1} ", request.StockItems);
+
+        // Get the existing stock list from DB
+        var existingStockList = _context.StockList.FirstOrDefault() ?? new Core.Entities.StockList();
+
+        // Map gRPC request to StockList
+        var newStockList = MapToStockList(request);
+
+        // Merge existing and new stock items (avoid duplicates)
+        foreach (var newItem in newStockList.StockItems)
+        {
+            var existingItem = existingStockList.StockItems.FirstOrDefault(s => s.Product.Name == newItem.Product.Name);
+
+            if (existingItem == null)
+            {
+                // If product is not in the list, add it
+                existingStockList.StockItems.Add(newItem);
+            }
+        }
+
+        // Save updated stock list to DB
+        _context.StockList.Update(existingStockList);
+        await _context.SaveChangesAsync();
+
+        return new UpdateInventoryResponse { Message = "Stock updated successfully" };
+    }
+
     private static Core.Entities.Store MapToStore(StoreProto.Store store) =>
         new()
         {
@@ -41,6 +73,7 @@ public class HubServer : HubService.HubServiceBase
                 Longitude = store.Location.Longitude,
             },
         };
+
     private static Core.Entities.StockList MapToStockList(StoreProto.UpdateInventoryRequest stockItems)
     {
         Core.Entities.StockList stockList = new Core.Entities.StockList();

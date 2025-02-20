@@ -12,6 +12,7 @@ service StoreService {
 
 service HubService {
     rpc HandShake (HandShakeRequest) returns (HandShakeResponse);
+    rpc UpdateInventory (UpdateInventoryRequest) returns (UpdateInventoryResponse);
 }
 
 message Store {
