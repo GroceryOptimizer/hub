@@ -13,7 +13,6 @@ public class Store
 
     public string GrpcAddress { get; set; } // http://1.2.3.4:5789
 
-    // Navigation
     [Required]
-    public Coordinates Location { get; set; } = new();
+    public Coordinates Location { get; set; }
 }
