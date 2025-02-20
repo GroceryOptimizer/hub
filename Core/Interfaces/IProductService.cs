@@ -1,8 +1,9 @@
-using Core.Entities;
+using Core.DTOs;
 
 namespace Core.Interfaces;
 
 public interface IProductService
 {
-    Task<List<Product>> GetAll();
+    Task<List<ProductDTO>> GetAll();
+    Task<ProductDTO?> GetById(Guid id);
 }

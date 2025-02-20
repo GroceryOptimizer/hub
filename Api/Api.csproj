@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <Protobuf Include="Protos\grocer.proto" />
   </ItemGroup>
 
