@@ -57,6 +57,7 @@ namespace StoreApi
                 // Send the request
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
 
+                //############################################## NEW FILTERING SYSTEM, SEND CLIENT EVERYTHING ##############################################
                 // Parse the request to workable DTOs and check for duplicates
                 foreach (var item in shoppingReply.StockItems)
                 {
@@ -75,6 +76,33 @@ namespace StoreApi
                         collectedReply[storeIds[index]].Add(dto);
                     }
                 }
+                //##########################################################################################################################################
+
+                // ############################################## OLD FILTERING SYSTEM, NOW DONE CLIENT SIDE ##############################################
+                //0: Loop through each StockItem in the reply from this Store
+                //foreach (var stockItem in shoppingReply.StockItems)
+                //{
+                //    StockItemDTO dto = new StockItemDTO(new ProductDTO(stockItem.Name), stockItem.Price);
+                //    // 1: Check if item already exists in 'collectedReply'.
+                //    if (collectedReply.Values.SelectMany(list => list).Any(existingItem => existingItem.Product.Name == dto.Product.Name))
+                //    {
+                //        // 2: If is - ignore the item, don't add it anywhere.
+                //        Console.WriteLine("Already found product " + dto.Product.Name + " in the reply-collection. Ignoring this instance.");
+                //        continue;
+                //    }
+                //    // 3: If not - Check if this store ID already exists in 'collectedReply' as a Key.
+                //    if (!collectedReply.ContainsKey(storeIds[index]))
+                //    {
+                //        // 4: If not - Add this store to 'collectedReply' and add the item in their value.
+                //        collectedReply[storeIds[index]] = new List<StockItemDTO> { dto };
+                //    }
+                //    else
+                //    {
+                //        // 5: If is - add the item to the Key's value.
+                //        collectedReply[storeIds[index]].Add(dto);
+                //    }
+                //}
+                //##########################################################################################################################################
                 index++; // Shift index by 1
             }
             return collectedReply; // return crafted reply
