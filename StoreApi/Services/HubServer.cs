@@ -44,22 +44,31 @@ public class HubServer : HubService.HubServiceBase
             throw new RpcException(new Status(StatusCode.NotFound, "Store not found"));
 
         // Get all product names from the database
-        var productNames = _context.Products.Select(p => p.Name);
+        //var productNames = _context.Products.Select(p => p.Name);
         // Get all product names from the request
-        var stockItemNames = request.StockItems.Select(x => x.Product.Name);
-        // Get all products that are not in the request
-        var products = await _context.Products.Where(p => !stockItemNames.Contains(p.Name)).ToListAsync();
+        //var stockItemNames = request.StockItems.Select(x => x.Product.Name);
+        // Get all products that are not in the database
+        //var products = stockItemNames.Where(p => !productNames.Contains(p)).ToList();
 
         var storeInventories = new List<StoreInventory>();
 
         // Map the stock items to store inventories
+
         foreach (var stockItem in request.StockItems)
         {
+            var product = _context.Products.FirstOrDefault(p => p.Name == stockItem.Product.Name) ??
+                new Core.Entities.Product { Name = stockItem.Product.Name };
 
-            var product = products.First(p => p.Name == stockItem.Product.Name);
-            var map = MapToStoreInventory(stockItem, product, store);
+            if (!_context.Products.Contains(product))
+            {
+                _context.Products.Add(product);
+                storeInventories.Add(MapToStoreInventory(stockItem, product, store));
+            }
+            else
+            {
+                Console.WriteLine("Product already exists in the database {0}", product.Name);
+            }
 
-            storeInventories.Add(map);
         }
 
 
