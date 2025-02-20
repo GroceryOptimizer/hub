@@ -80,8 +80,13 @@ public class HubServer : HubService.HubServiceBase
 
         foreach (var item in stockItems.StockItems)
         {
-            Core.Entities.Product newProduct = new Core.Entities.Product(item.Product.Name);
-            Core.Entities.StockItem newStockItem = new Core.Entities.StockItem(newProduct, item.Quantity, item.Price);
+            Core.Entities.Product newProduct = new Core.Entities.Product();
+            newProduct.Name = item.Product.Name;
+            Core.Entities.StockItem newStockItem = new Core.Entities.StockItem();
+            newStockItem.Product = newProduct;
+            newStockItem.Quantity = item.Quantity;
+            newStockItem.Price = item.Price;
+
             stockList.StockItems.Add(newStockItem);
         }
 

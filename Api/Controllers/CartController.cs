@@ -36,7 +36,11 @@ namespace Api.Controllers
             }
 
             // Parse DTO cart to normal Products
-            List<Product> products = cart.Cart.Select(p => new Product(p.Name)).ToList();
+            List<Product> products = cart.Cart.Select(p =>
+            {
+                return new Product { Name = p.Name };
+            }).ToList();
+
             ShoppingCart cartToSend = new ShoppingCart(products); // Create ShoppingCart with this list of Product's
 
             // Call the gRPC function to send the request and await response from GRPC API
