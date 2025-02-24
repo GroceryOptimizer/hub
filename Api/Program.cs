@@ -17,6 +17,7 @@ public class Program
         // Services
         builder.Services.AddScoped<IStoreRepository, StoreRepository>();
         //builder.Services.AddScoped<IProductRepository, ProductRepository>(); //Not implemented yet
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Database
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
