@@ -24,10 +24,10 @@ namespace StoreApi
 
         public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
-            var storeNames = await _context.Stores
+            var storeNames = await _context.Vendors
                             .Select(v => v.Name)
                             .ToListAsync();
-            var storeIds = await _context.Stores
+            var vendorIds = await _context.Vendors
                             .Select(v => v.Id)
                             .ToListAsync();
             int index = 0;
@@ -68,16 +68,16 @@ namespace StoreApi
                         Console.WriteLine("Already found product " + dto.Product.Name + " in the reply-collection. Ignoring this instance.");
                         continue;
                     }
-                    // 3: If not - Check if this store ID already exists in 'collectedReply' as a Key.
-                    if (!collectedReply.ContainsKey(storeIds[index]))
+                    // 3: If not - Check if this vendor ID already exists in 'collectedReply' as a Key.
+                    if (!collectedReply.ContainsKey(vendorIds[index]))
                     {
-                        // 4: If not - Add this store to 'collectedReply' and add the item in their value.
-                        collectedReply[storeIds[index]] = new List<StockItemDTO> { dto };
+                        // 4: If not - Add this vendor to 'collectedReply' and add the item in their value.
+                        collectedReply[vendorIds[index]] = new List<StockItemDTO> { dto };
                     }
                     else
                     {
                         // 5: If is - add the item to the Key's value.
-                        collectedReply[storeIds[index]].Add(dto);
+                        collectedReply[vendorIds[index]].Add(dto);
                     }
                 }
                 index++; // Shift index by 1
