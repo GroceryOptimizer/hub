@@ -52,7 +52,6 @@ public class Program
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
         // Register StoreClient Service
-        //builder.Services.AddScoped<StoreClient>(); // Deprecated
         builder.Services.AddScoped<StoreApi.Services.StoreService>();
 
         // Controllers
