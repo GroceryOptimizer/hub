@@ -35,7 +35,8 @@ public class HubServer : HubService.HubServiceBase
         ServerCallContext context
     )
     {
-        Console.WriteLine("Received inventory list from Go Store service: {0}, {1} ", request.StockItems);
+        Console.WriteLine("Received inventory list from Go Store service: {0}, {1} ", request.StockItems, request.StoreId);
+
 
         // Get the existing stock list from DB
         var existingStockList = _context.StockList.FirstOrDefault() ?? new Core.Entities.StockList();
