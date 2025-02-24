@@ -16,17 +16,17 @@ namespace StoreApi.Services
 {
     public class StoreService
     {
-        private Dictionary<string, GrpcChannel> _channels = new();
-        private readonly IStoreRepository _storeRepository;
+        private readonly Dictionary<string, GrpcChannel> _channels = new();
+        private readonly IUnitOfWork _unitOfWork;
 
-        public StoreService(IStoreRepository storeRepository)
+        public StoreService(IUnitOfWork unitOfWork)
         {
-            this._storeRepository = storeRepository;
+            this._unitOfWork = unitOfWork;
         }
 
         public async Task<Dictionary<int, List<StockItemDTO>>> SendGrpcCall(ShoppingCart shoppingCart)
         {
-            var stores = await _storeRepository.GetAllStoresAsync();
+            var stores = await _unitOfWork.Stores.GetAllStoresAsync();
             var storeNames = stores.Select(v => v.Name).ToList();
             var storeIds = stores.Select(v => v.Id).ToList();
 
