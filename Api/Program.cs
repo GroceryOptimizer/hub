@@ -1,8 +1,11 @@
 using Core;
+using Core.Repositories;
 using Data;
+using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using StoreApi;
 using StoreApi.Services;
+
+using StoreProto;
 
 namespace Api;
 
@@ -12,6 +15,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         // Services
+        builder.Services.AddScoped<IStoreRepository, StoreRepository>();
+        //builder.Services.AddScoped<IProductRepository, ProductRepository>(); //Not implemented yet
+
         // Database
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -45,7 +51,8 @@ public class Program
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
         // Register StoreClient Service
-        builder.Services.AddScoped<StoreClient>();
+        //builder.Services.AddScoped<StoreClient>(); // Deprecated
+        builder.Services.AddScoped<StoreApi.Services.StoreService>();
 
         // Controllers
         builder.Services.AddControllers();

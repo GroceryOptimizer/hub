@@ -1,8 +1,7 @@
 ﻿using Core.DTOs;
 using Core.Entities;
-
+using Core.Repositories;
 using Data;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,12 +13,12 @@ namespace Api.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStoreRepository _storeRepository;
         private readonly StoreClient _storeClient;
 
-        public CartController(ApplicationDbContext context, StoreClient storeClient)
+        public CartController(IStoreRepository storeRepository, StoreClient storeClient)
         {
-            this._context = context;
+            this._storeRepository = storeRepository;
             this._storeClient = storeClient;
         }
 
@@ -50,12 +49,11 @@ namespace Api.Controllers
 
             // Get our relevant Stores ready and prepared
             var storeIds = result.Keys.ToList();
-            var relevantStores = await _context.Stores
-                .Where(v => storeIds.Contains(v.Id))
-                .ToListAsync();
+            var relevantStores = await _storeRepository.GetAllStoresAsync();
+            var filteredStores = relevantStores.Where(v => storeIds.Contains(v.Id)).ToList();
 
             // parse response from gRPC to StoreVisitDTOs (find Store in db by Store id)
-            List<StoreVisitDTO> returnList = relevantStores
+            List<StoreVisitDTO> returnList = filteredStores
                 .Select(v => new StoreVisitDTO(
                     v.Id,
                     new StoreDTO(
