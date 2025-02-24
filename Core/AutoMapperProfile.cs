@@ -14,8 +14,8 @@ namespace Core
             CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<ShoppingCart, ShoppingCartDTO>().ReverseMap();
             CreateMap<StockItem, StockItemDTO>().ReverseMap();
-            CreateMap<Store, StoreDTO>().ReverseMap();
-            CreateMap<StoreVisit, StoreVisitDTO>().ReverseMap();
+            CreateMap<Vendor, VendorDTO>().ReverseMap();
+            CreateMap<VendorVisit, VendorVisitDTO>().ReverseMap();
         }
     }
 }
