@@ -1,68 +1,46 @@
 using Api.Grpc;
-using Core;
+using Core.Mapper;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Services
 // Database
-builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Cors
 builder.Services.AddCors(opt =>
-    opt.AddPolicy(
-        "AllowAllLocalhost",
-        policy =>
-            policy
-                .WithOrigins(
-                    "http://localhost:3000",
-                    "http://localhost:5173",
-                    "http://localhost:8080",
-                    "http://localhost:5000",
-                    "http://localhost:7049"
-                )
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-    )
+    opt.AddPolicy("AllowAll", policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod())
 );
+
+builder.Services.AddControllers();
+builder.Services.AddGrpc();
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-// Register StoreClient Service
-//builder.Services.AddScoped<StoreClient>();
-
-// Controllers
-builder.Services.AddControllers();
-
-// Register GRPC Service
-builder.Services.AddGrpc();
 
 var app = builder.Build();
 
-// Ensure database is deleted and migrated before starting the application
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await context.Database.EnsureDeletedAsync();
     await context.Database.MigrateAsync();
 }
 
-// Always use swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Listen on GRPC handshake
-app.UseCors("AllowAllLocalhost");
+app.UseCors("AllowAll");
 
-app.MapGrpcService<HubServer>();
-app.UseAuthorization();
 app.MapControllers();
+app.MapGrpcService<HubServer>();
+
+app.UseAuthorization();
 
 app.Run();
