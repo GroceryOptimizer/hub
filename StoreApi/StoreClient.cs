@@ -57,7 +57,6 @@ namespace StoreApi
                 // Send the request
                 var shoppingReply = await client.ProductsAsync(inventoryRequest);
 
-                //############################################## NEW FILTERING SYSTEM, SEND CLIENT EVERYTHING ##############################################
                 // Parse the request to workable DTOs and check for duplicates
                 foreach (var item in shoppingReply.StockItems)
                 {
