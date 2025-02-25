@@ -57,17 +57,20 @@ For those who prefer the terminal, follow these steps:
    dotnet run --project Api --launch-profile "http"
    ```  
   
-## API Reference
+## API Reference  
    
 ### REST API Endpoints (Client Communication)  
-#### `POST /api/hub`  
-**Description:** Processes a shopping cart and returns a collection of vendor visits.  
+#### `POST /api/cart`  
+**Description:** Processes a shopping cart and returns a collection of store visits.  
 **Request Body:**  
 ```json
 {
   "cart": [
     {
-      "name": "string"
+      "name": "milk"
+    },
+    {
+      "name": "ham"
     }
   ]
 }
@@ -76,23 +79,21 @@ For those who prefer the terminal, follow these steps:
 ```json
 [
   {
-    "vendorId": 1,
-    "vendor": {
-      "id": 1,
-      "name": "Vendor Name",
-      "coordinatesId": 101,
-      "coordinates": {
-        "id": 101,
-        "longitude": 13.405,
-        "latitude": 52.52
+    "storeId": 2,
+    "store": {
+      "id": 2,
+      "name": "Coop",
+      "location": {
+        "latitude": 40.3,
+        "longitude": 32.1
       }
     },
     "stockItems": [
       {
         "product": {
-          "name": "Apple"
+          "name": "ham"
         },
-        "price": 299
+        "price": 50
       }
     ]
   }
@@ -119,7 +120,41 @@ message InventoryResponse {
   repeated StockItem stockItems = 1;
 }
 ```  
-       
+
+#### `HandShake (HandShakeRequest) → HandShakeResponse`  
+**Description:** Registers a store with the hub service.  
+
+**Request:**  
+```proto
+message HandShakeRequest {
+  Store store = 1;
+}
+```  
+
+**Response:**  
+```proto
+message HandShakeResponse {
+  string id = 1;
+}
+```  
+
+#### `SendMessage (SendMessageRequest) → SendMessageResponse`  
+**Description:** Sends a message to the store and receives a reply.  
+
+**Request:**  
+```proto
+message SendMessageRequest {
+  string message = 1;
+}
+```  
+
+**Response:**  
+```proto
+message SendMessageResponse {
+  string reply = 1;
+}
+```  
+
 ## Usage  
 - Start within **30 seconds** after launching the Docker containers.  
 
@@ -129,3 +164,4 @@ message InventoryResponse {
 - [RikiRhen](https://github.com/RikiRhen)  
 - [Syldriem](https://github.com/Syldriem)  
 - [vikkoooo](https://github.com/vikkoooo)  
+
