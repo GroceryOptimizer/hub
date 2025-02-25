@@ -1,11 +1,12 @@
 using Core;
 using Core.Repositories;
+
 using Data;
 using Data.Repositories;
-using Microsoft.EntityFrameworkCore;
-using StoreApi.Services;
 
-using StoreProto;
+using Microsoft.EntityFrameworkCore;
+
+using StoreApi.Services;
 
 namespace Api;
 
@@ -14,9 +15,9 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
         // Services
         builder.Services.AddScoped<IStoreRepository, StoreRepository>();
-        //builder.Services.AddScoped<IProductRepository, ProductRepository>(); //Not implemented yet
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Database
