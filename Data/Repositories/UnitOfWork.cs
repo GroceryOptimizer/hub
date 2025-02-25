@@ -1,5 +1,4 @@
-﻿
-using Core.Repositories;
+﻿using Core.Repositories;
 
 namespace Data.Repositories
 {
@@ -7,7 +6,6 @@ namespace Data.Repositories
     {
         private readonly ApplicationDbContext _context;
         public IStoreRepository Stores { get; }
-        //public IProductRepository Products { get; } // Not implemented yet 
 
         public UnitOfWork(ApplicationDbContext context)
         {
