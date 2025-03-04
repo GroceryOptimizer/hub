@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Core.DTOs;
 using Core.Entities;
 using Core.Repositories;
 
 using Data;
+
 using Grpc.Core;
 using Grpc.Net.Client;
+
 using StoreProto;
 
 namespace StoreApi.Services
@@ -34,14 +37,14 @@ namespace StoreApi.Services
             // Local variable to store all replies
             Dictionary<int, List<StockItemDTO>> collectedReply = new();
 
-            foreach (var store in storeNames)
+            foreach (var store in stores)
             {
-                string containerName = "store_" + store.ToLower();
-                string grpcAddress = $"http://{containerName}:50051";
-
+                var containerName = store.Name;
+                var grpcAddress = $"http://{store.GrpcAddress}";
                 // Craft the connection
                 if (!_channels.ContainsKey(containerName))
                 {
+                    Console.WriteLine($"Creating channel for {containerName}");
                     _channels[containerName] = GrpcChannel.ForAddress(grpcAddress, new GrpcChannelOptions
                     {
                         Credentials = ChannelCredentials.Insecure
